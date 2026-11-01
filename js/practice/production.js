@@ -1,0 +1,56 @@
+// 7. feladattípus – Termelési jellemzők (kibocsátás, ciklusidő, létszám), 3 pont
+import { makeTask, addForm, p, ul, note } from './common.js';
+import { fmt, LETTERS } from '../util.js';
+
+export const meta = { kind: 'production', title: 'Termelési jellemzők: kibocsátás, ciklusidő, létszám', points: 3, exam: true, order: 7 };
+
+export function generate(r, preset) {
+  let P;
+  if (preset === 'vizsga') P = { what: 'Gamer székek', ops: [4, 8, 12, 5, 2, 1], hours: 8 };
+  else {
+    let ops;
+    for (let i = 0; i < 100; i++) {
+      const n = r.int(4, 7);
+      ops = Array.from({ length: n }, () => r.int(1, 12));
+      const s = ops.reduce((x, y) => x + y, 0);
+      const mx = Math.max(...ops);
+      if (s < 58 && ops.filter((o) => o === mx).length === 1) break;
+    }
+    P = { what: r.pick(['Gamer székek', 'irodai székek', 'kerékpárok', 'konyhaszekrények', 'elektromos rollerek']), ops, hours: r.pick([8, 8, 7.5, 6]) };
+  }
+  return build(P);
+}
+
+function build(P) {
+  const t = makeTask({ ...meta, params: P });
+  const sum = P.ops.reduce((x, y) => x + y, 0);
+  const cyc = Math.max(...P.ops);
+  const mins = P.hours * 60;
+  const out = mins / cyc;
+  const workers = sum / cyc;
+  const perHour = 60 / sum;
+  t.statement = [
+    p(`A(z) ${P.what} összeszerelésével foglalkozó vállalkozásnál az összeállítás folyamata ${P.ops.length} egymást követő feladatból áll. Az egyes feladatok műveleti ideje:`),
+    ul(P.ops.map((o, i) => `${LETTERS[i]}. feladat: ${o} perc`)),
+    p('Kerekítési pontosság: egész (matematikai és logikai kerekítés is elfogadott). A végeredmény mellékszámítás nélkül nem értékelhető.'),
+  ];
+  const both = (x) => [Math.floor(x + 1e-9), Math.round(x), Math.ceil(x - 1e-9)];
+  const fld = (main, acc) => ({ expect: main, accept: acc.filter((v) => v !== main) });
+  addForm(t, 'r', null, ['Adat/mutató', 'Eredmény'], [
+    { label: `Maximális kibocsátás mennyisége egy ${fmt(P.hours)} órás műszak alatt (db/műszak)`, field: { ...fld(Math.floor(out + 1e-9), both(out).slice(0, 2)), unit: 'db' }, pts: 1 },
+    { label: 'Szükséges dolgozói létszám a maximális kibocsátás teljesítéséhez (fő)', field: { expect: Math.ceil(workers - 1e-9), unit: 'fő' }, pts: 1 },
+    { label: 'Kibocsátás óránként, ha a teljes munkafolyamatot 1 fő dolgozó végzi (db/óra)', field: { ...fld(Math.floor(perHour + 1e-9), both(perHour).slice(0, 2)), unit: 'db' }, pts: 1 },
+  ]);
+  t.hints = [
+    'Szalagszerű munkánál az ütemidőt (ciklusidőt) a LEGHOSSZABB művelet határozza meg – ez a szűk keresztmetszet.',
+    'Max. kibocsátás = műszak percben ÷ ciklusidő. Létszám = összes műveleti idő ÷ ciklusidő, FELFELÉ kerekítve (fél ember nincs). Egy dolgozónál egy termék a teljes műveleti időösszegig tart.',
+    `Ciklusidő = ${cyc} perc; a műszak ${fmt(mins)} perc; az összes műveleti idő ${P.ops.join(' + ')} = ${sum} perc.`,
+  ];
+  t.solution = [
+    p(`Ciklusidő = a leghosszabb művelet = ${cyc} perc → ${fmt(mins)} ÷ ${cyc} = ${fmt(out, 2)} → ${Math.floor(out + 1e-9)} db/műszak`),
+    p(`Létszám = ${sum} ÷ ${cyc} = ${fmt(workers, 2)} → felfelé kerekítve ${Math.ceil(workers - 1e-9)} fő`),
+    p(`1 fő esetén: 60 ÷ ${sum} = ${fmt(perHour, 3)} → ${Math.floor(perHour + 1e-9)} db/óra (logikai kerekítéssel lefelé; matematikai kerekítés is elfogadott)`),
+    note('Késztermékről van szó, ezért a logikai (lefelé) kerekítés a védhetőbb, de a vizsgán mindkettő elfogadott.'),
+  ];
+  return t;
+}

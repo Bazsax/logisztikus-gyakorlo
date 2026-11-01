@@ -1,0 +1,11 @@
+{
+  "name": "Logisztikus gyakorló",
+  "short_name": "Logisztikus",
+  "description": "Gyakorló alkalmazás a logisztikus (10415006) állami vizsgához",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#faf9f5",
+  "theme_color": "#c96442",
+  "lang": "hu",
+  "icons": [{ "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
