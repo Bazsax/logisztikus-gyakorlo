@@ -47,3 +47,9 @@ Formátum (példák):
 ```
 
 `source`: `redmenta` = a Redmenta javítókulcsa igazolja, `vizsga` = korábbi vizsgafeladatsor megoldókulcsa, `claude` = saját megoldás (az alkalmazás jelöli).
+
+## Szinkronizálás eszközök között (opcionális)
+
+A Beállítások → *Szinkronizálás* részben létrehozott szinkronkóddal a statisztika, a beállítások (a téma kivételével) és a félbehagyott gyakorlás több eszközön is elérhető. A háttér egy Vercel-függvény (`api/sync.js`) és egy ingyenes Upstash Redis adatbázis.
+
+Beállítás egyszer: Vercel → a projekt → **Storage** → *Create Database* → **Upstash for Redis** (ingyenes csomag) → *Connect* a projekthez. Ez automatikusan beállítja a `KV_REST_API_URL` és `KV_REST_API_TOKEN` környezeti változókat; utána egy új deploy kell (Deployments → Redeploy). Adatbázis nélkül az app ugyanúgy működik, csak a szinkron nem.

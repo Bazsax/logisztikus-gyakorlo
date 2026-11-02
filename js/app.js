@@ -5,6 +5,7 @@ import { loadBank, BANK, BANK_BY_ID, TOPICS, createSession, questionOf, practice
 import { renderTheory, hints as theoryHints, solutionText, aiAnswerText, isAnswered, TYPE_LABEL, maxPoints } from './theory.js';
 import { renderPractice, renderBlocks, renderWalkthrough } from './practiceView.js';
 import { GENERATORS } from './practice/index.js';
+import { syncState, onSyncState, newCode, normCode, connect, disconnect, syncNow, startAutoSync, onRemoteChange } from './sync.js';
 import { helpPrompt, solvePrompt, essayPrompt, importAi, aiAgreement } from './ai.js';
 
 const app = document.getElementById('app');
@@ -471,8 +472,9 @@ function viewSettings() {
     h('button', { class: 'btn sm', onclick: () => { ['examTheory', 'examEssays', 'examWrittenMin', 'examProjectMin', 'weightWritten', 'weightProject', 'passPct'].forEach((k) => { settings[k] = DEFAULT_SETTINGS[k]; }); saveSettings(); render(); } }, 'Alapértékek visszaállítása')));
   const fileIn = h('input', { type: 'file', accept: '.json', class: 'hide' });
   fileIn.addEventListener('change', async () => { try { importAll(await fileIn.files[0].text()); S = loadSession(); applyTheme(); toast('Mentés visszatöltve'); render(); } catch (e) { toast('Hiba: ' + e.message); } });
+  wrap.appendChild(syncCard());
   wrap.appendChild(h('div', { class: 'card card-pad' }, h('h3', null, 'Adatok'),
-    h('p', { class: 'small muted' }, 'Minden adat csak ebben a böngészőben tárolódik. Másik eszközre a mentésfájllal viheted át.'),
+    h('p', { class: 'small muted' }, 'Az adatok ebben a böngészőben tárolódnak (szinkronkóddal a többi eszközödre is átkerülnek). Mentésfájllal is átviheted vagy archiválhatod őket.'),
     h('div', { class: 'row' },
       h('button', { class: 'btn', onclick: () => download(`logisztikus-mentes-${new Date().toISOString().slice(0, 10)}.json`, exportAll()) }, 'Mentés letöltése'),
       h('button', { class: 'btn', onclick: () => fileIn.click() }, 'Mentés betöltése'), fileIn,
@@ -480,6 +482,34 @@ function viewSettings() {
       S ? h('button', { class: 'btn ghost', onclick: () => { if (confirm('Elveted az aktuális gyakorlást?')) { S = null; clearSession(); render(); } } }, 'Aktuális gyakorlás elvetése') : null)));
   wrap.appendChild(h('p', { class: 'tiny muted' }, `Kérdésbank: ${BANK.length} kérdés (${BANK.filter((q) => q.source === 'redmenta').length} Redmenta-kulccsal ellenőrzött). Gyakorlati generátorok: ${GENERATORS.map((g) => g.meta.title).join(', ')}.`));
   return wrap;
+}
+
+function syncCard() {
+  const st = syncState();
+  const box = h('div', { class: 'card card-pad stack' }, h('h3', { style: { margin: 0 } }, 'Szinkronizálás eszközök között'));
+  const status = () => {
+    const x = syncState();
+    if (x.err) return h('p', { class: 'small', style: { color: 'var(--bad)', margin: 0 } }, x.err);
+    return h('p', { class: 'small muted', style: { margin: 0 } }, x.lastAt ? `Utolsó szinkron: ${new Date(x.lastAt).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'medium' })}` : 'Még nem volt szinkronizálás.');
+  };
+  const run = async (fn, okMsg) => { try { await fn(); if (okMsg) toast(okMsg); } catch (e) { toast(e.message); } render(); };
+  if (!st.code) {
+    const inp = h('input', { type: 'text', class: 'code-in', placeholder: 'XXXXX-XXXXX-XXXXX-XXXXX', autocomplete: 'off', autocapitalize: 'characters', spellcheck: false });
+    box.append(
+      h('p', { class: 'small muted', style: { margin: 0 } }, 'Egy szinkronkóddal a gépeden és a telefonodon ugyanaz lesz a statisztika, a beállítások és a félbehagyott gyakorlás. Nem kell regisztráció: aki ismeri a kódot, eléri az adatokat, ezért ne oszd meg mással.'),
+      h('div', { class: 'row' }, h('button', { class: 'btn primary', onclick: () => run(() => connect(newCode()), 'Szinkronkód létrehozva – írd be a többi eszközödön is') }, 'Új szinkronkód létrehozása')),
+      h('div', { class: 'lbl small', style: { fontWeight: 600 } }, 'Már van kódod egy másik eszközről?'),
+      h('div', { class: 'row' }, inp, h('button', { class: 'btn', onclick: () => { const c = normCode(inp.value); if (!c) { toast('A kód 20 karakter (4×5), kötőjelekkel vagy anélkül.'); return; } run(() => connect(c), 'Csatlakoztatva, adatok összefésülve'); } }, 'Csatlakozás')));
+  } else {
+    box.append(
+      h('p', { class: 'small muted', style: { margin: 0 } }, 'Ezen az eszközön be van kapcsolva a szinkronizálás. Írd be ugyanezt a kódot a többi eszközödön (Beállítások → Szinkronizálás).'),
+      h('div', { class: 'row' }, h('code', { class: 'sync-code' }, st.code), h('button', { class: 'btn sm', onclick: () => copyText(st.code) }, 'Másolás')),
+      status(),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn', onclick: () => run(syncNow, 'Szinkronizálva') }, 'Szinkronizálás most'),
+        h('button', { class: 'btn ghost', onclick: () => { if (confirm('Leválasztod ezt az eszközt? A helyi adatok megmaradnak, csak a szinkron áll le.')) { disconnect(); render(); } } }, 'Leválasztás')));
+  }
+  return box;
 }
 
 // ---------------- Útválasztás ----------------
@@ -504,6 +534,14 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme
   try { await loadBank(); } catch (e) { app.textContent = 'Nem sikerült betölteni a kérdésbankot: ' + e.message; return; }
   if (S && S.items.some((it) => it.k === 't' && !BANK_BY_ID[it.id])) { S = null; clearSession(); }
   render();
+  onRemoteChange(() => {
+    clearTimeout(saveTimer);
+    S = loadSession(); applyTheme();
+    if (document.activeElement?.matches?.('input, textarea, select')) return; // gépelés közben nem rajzolunk újra
+    render(); toast('Frissítve a másik eszközödről');
+  });
+  onSyncState(() => { if (location.hash.startsWith('#/settings') && !document.activeElement?.matches?.('input, textarea')) render(); });
+  startAutoSync();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 }());
 
