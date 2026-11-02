@@ -90,6 +90,9 @@ function record(item, gross) {
     if (rec) { rows.rec[w] = rec; rows.order[w - item.lead] = rec; }
     onhand = onhand + rec - g;
   }
+  // A hivatalos megoldás a nyitókészlet-sorban az utolsó szükségleti hét UTÁNI hetet (záró készlet) is kéri, ha belefér a táblázatba
+  const lastG = Math.max(...Object.keys(rows.gross).map(Number));
+  if (Number.isFinite(lastG) && lastG + 1 <= WEEKS[WEEKS.length - 1]) { rows.open[lastG + 1] = rows.softOpen[lastG + 1]; delete rows.softOpen[lastG + 1]; }
   return rows;
 }
 
@@ -126,24 +129,33 @@ function build(P) {
 
   const toRow = (obj) => WEEKS.map((w) => (obj[w] === undefined ? null : obj[w]));
   const openRow = (rec) => WEEKS.map((w) => (rec.open[w] !== undefined ? rec.open[w] : { soft: rec.softOpen[w] }));
-  const nT = items.length;
-  const per = 6 / nT / 5;
-  const addRec = (id, title, rec) => addGrid(t, id, title, COLS, [
-    { label: 'Bruttó szükséglet', values: toRow(rec.gross), pts: per },
-    { label: 'Nyitókészlet', values: openRow(rec), pts: per },
-    { label: 'Nettó szükséglet', values: toRow(rec.net), pts: per },
-    { label: 'Tervezett beérkezés', values: toRow(rec.rec), pts: per },
-    { label: 'Tervezett rendelés', values: toRow(rec.order), pts: per },
+  // Pontozás a Gamer székes vizsgalap javítókulcsa szerint: a késztermék és az egyszerű alkatrészek bruttó szükséglete
+  // nem pontozott („---”), a nyitókészlet 0,1 p/cella; az utolsó tételnél (csavar) a bruttó és a rendelés 0,2 p/cella.
+  const cnt = (o) => Object.keys(o).length;
+  const plan = [prodRec, ...(P.multi ? [subRec] : []), ...recs].map((rec, k, all) => {
+    const last = k === all.length - 1 && k > 0;
+    const w = last ? { g: 0.2, o: 0.1, n: 0.1, r: 0.1, q: 0.2 } : { g: 0, o: 0.1, n: 0.1, r: 0.1, q: 0.1 };
+    return { rec, pts: { g: w.g * cnt(rec.gross), o: w.o * cnt(rec.open), n: w.n * cnt(rec.net), r: w.r * cnt(rec.rec), q: w.q * cnt(rec.order) } };
+  });
+  const rawTotal = plan.reduce((s, x) => s + Object.values(x.pts).reduce((a, b) => a + b, 0), 0);
+  const k6 = 6 / rawTotal; // a 6 pontra skálázás (a Gamer székes adatoknál pontosan 1)
+  const addRec = (id, title, { rec, pts }) => addGrid(t, id, title, COLS, [
+    { label: 'Bruttó szükséglet', values: toRow(rec.gross), pts: pts.g * k6, ptsLabel: pts.g ? undefined : '---' },
+    { label: 'Nyitókészlet', values: openRow(rec), pts: pts.o * k6 },
+    { label: 'Nettó szükséglet', values: toRow(rec.net), pts: pts.n * k6 },
+    { label: 'Tervezett beérkezés', values: toRow(rec.rec), pts: pts.r * k6 },
+    { label: 'Tervezett rendelés', values: toRow(rec.order), pts: pts.q * k6 },
   ]);
-  addRec('prod', P.product.name, prodRec);
-  if (P.multi) addRec('sub', `${P.sub.name} (1 db/termék)`, subRec);
-  P.comps.forEach((c, i) => addRec(`c${i}`, P.multi && i === 1 ? `${c.name} (${c.qty} db/termék + ${c.qtySub} db/${P.sub.name.toLowerCase()})` : `${c.name} (${c.qty} db/termék)`, recs[i]));
+  let k = 0;
+  addRec('prod', P.product.name, plan[k++]);
+  if (P.multi) addRec('sub', `${P.sub.name} (1 db/termék)`, plan[k++]);
+  P.comps.forEach((c, i) => addRec(`c${i}`, P.multi && i === 1 ? `${c.name} (${c.qty} db/termék + ${c.qtySub} db/${P.sub.name.toLowerCase()})` : `${c.name} (${c.qty} db/termék)`, plan[k++]));
 
   const firstOrderW = Math.min(...Object.keys(prodRec.order).map(Number));
   const c0 = P.comps[0];
   t.hints = [
     'Először a késztermék rekordját töltsd ki: a részegységek és alkatrészek bruttó szükséglete a szülőtétel TERVEZETT RENDELÉSÉBŐL jön (nem a vevői megrendelésből).',
-    'Szükségleti héten: nettó = bruttó − nyitókészlet → a beérkezés a csomag felfelé kerekített többszöröse → a rendelés átfutási idővel korábban. Következő nyitókészlet = nyitó + beérkezés − bruttó. A nyitókészletet a szükségleti heteken kötelező kitölteni.'
+    'Szükségleti héten: nettó = bruttó − nyitókészlet → a beérkezés a csomag felfelé kerekített többszöröse → a rendelés átfutási idővel korábban. Következő nyitókészlet = nyitó + beérkezés − bruttó. A nyitókészletet a szükségleti heteken és az utolsó szükségleti hetet követő héten (záró készlet) kell kitölteni.'
       + (P.multi ? ` A közös alkatrész (${P.comps[1].name.toLowerCase()}) bruttó szükséglete KÉT forrásból adódik össze: a késztermék és a(z) ${P.sub.name.toLowerCase()} tervezett rendeléséből.` : ''),
     `Késztermék, első szükségleti hét: ${P.demand[dw[0]]} − ${P.product.stock} = ${prodRec.net[dw[0]]} → ${prodRec.rec[dw[0]] || 0} db. ${c0.name}: bruttó a ${firstOrderW}. héten ${prodRec.order[firstOrderW]} × ${c0.qty} = ${fmt(recs[0].gross[firstOrderW])} db.`,
   ];
@@ -152,7 +164,7 @@ function build(P) {
     explain(P.product.name, prodRec, P.product),
     ...(P.multi ? [explain(P.sub.name, subRec, P.sub)] : []),
     ...P.comps.map((c, i) => explain(c.name, recs[i], c)),
-    note('A nyitókészletet a vizsgamegoldások a szükségleti heteken adják meg; ha a többi hétre is helyesen beírod, az nem hiba (nem pontozzuk).'),
+    note('A Gamer székes javítókulcs szerint a nyitókészlet-sorban a szükségleti heteket és az azt követő hetet (záró készlet) kell kitölteni. A késztermék és az egyszerű alkatrészek bruttó szükséglete nem pontozott (---), a többi hét nyitókészlete sem – ha helyesen beírod, az nem hiba.'),
   ];
   return t;
 }
