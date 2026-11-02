@@ -9,8 +9,13 @@ import * as turnover from './turnover.js';
 import * as production from './production.js';
 import * as route from './route.js';
 import * as valuation from './valuation.js';
+import * as sched from './sched.js';
+import * as abc from './abc.js';
+import * as oee from './oee.js';
+import * as stock from './stock.js';
+import * as supplier3 from './supplier3.js';
 
-export const GENERATORS = [drp, supplier, eoq, mrp, johnson, turnover, production, route, valuation]
+export const GENERATORS = [drp, supplier, eoq, mrp, johnson, turnover, production, route, valuation, sched, abc, oee, stock, supplier3]
   .sort((a, b) => a.meta.order - b.meta.order);
 
 export const byKind = Object.fromEntries(GENERATORS.map((g) => [g.meta.kind, g]));

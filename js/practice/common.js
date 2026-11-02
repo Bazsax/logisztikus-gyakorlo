@@ -20,9 +20,13 @@ export function addGrid(task, id, title, cols, rows) {
   rows.forEach((row, r) => {
     const fids = [];
     const scored = [];
-    row.values.forEach((v, c) => {
+    row.values.forEach((v0, c) => {
+      let v = v0;
       const fid = `${id}.${r}.${c}`;
-      task.fields[fid] = { type: 'num', expect: v === undefined ? null : v, dec: 0, ...(row.field || {}) };
+      const soft = v && typeof v === 'object' ? v.soft : undefined;
+      const val = v && typeof v === 'object' ? null : v;
+      task.fields[fid] = { type: 'num', expect: val === undefined ? null : val, dec: 0, ...(soft !== undefined ? { soft } : {}), ...(row.field || {}) };
+      v = val;
       fids.push(fid);
       if (v !== null && v !== undefined) scored.push(fid);
     });
@@ -62,6 +66,7 @@ export function checkField(field, raw) {
   if (field.expect === null) {
     if (empty) return 'blank';
     if (field.type === 'num' && parseNum(raw) === 0) return 'blank';
+    if (field.soft !== undefined && field.type === 'num' && Math.abs(parseNum(raw) - field.soft) < 1e-9) return 'blank';
     return 'extra';
   }
   if (empty) {
@@ -92,7 +97,8 @@ export function expectText(field) {
   if (field.expect === null) return '';
   if (field.type === 'select') return String(field.expect);
   const main = fmt(field.expect, field.showDec ?? null);
-  return field.accept?.length ? `${main} (elfogadott: ${field.accept.map((a) => fmt(a)).join(', ')})` : main;
+  const acc = [...new Set((field.accept || []).filter((a) => Math.abs(a - field.expect) > 1e-9))];
+  return acc.length ? `${main} (elfogadott: ${acc.map((a) => fmt(a)).join(', ')})` : main;
 }
 
 /** Kiegészítő segéd: felfelé kerekítés adott többszörösre. */

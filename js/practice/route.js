@@ -1,22 +1,25 @@
 // 8. feladattípus – Áruelosztási körjárat sorminimum módszerrel, 3 pont
 import { makeTask, addForm, p, table, note } from './common.js';
 
-export const meta = { kind: 'route', title: 'Körjárat optimalizálása sorminimum módszerrel', points: 3, exam: true, order: 8 };
+export const meta = { kind: 'route', title: 'Körjárat optimalizálása (sor-/oszlopminimum)', points: 3, exam: true, order: 8 };
 
 const NODES = ['Késztermék raktár', 'A raktár', 'B raktár', 'C raktár', 'D raktár'];
 
 export function generate(r, preset) {
-  let M;
+  let M; let method = 'sor';
   if (preset === 'vizsga') {
     M = [[0, 3, 4, 12, 6], [15, 0, 5, 1, 12], [4, 5, 0, 2, 7], [1, 6, 2, 0, 5], [18, 12, 15, 18, 0]];
   } else {
     for (let i = 0; i < 500; i++) {
       M = NODES.map((_, a) => NODES.map((__, b) => (a === b ? 0 : r.int(1, 20))));
-      if (!nearest(M).tie) break;
+      method = r.next() < 0.7 ? 'sor' : 'oszlop';
+      if (!nearest(method === 'sor' ? M : transpose(M)).tie) break;
     }
   }
-  return build({ M });
+  return build({ M, method });
 }
+
+const transpose = (M) => M[0].map((_, j) => M.map((row) => row[j]));
 
 export function nearest(M) {
   const n = M.length;
@@ -37,11 +40,12 @@ export function nearest(M) {
 
 function build(P) {
   const t = makeTask({ ...meta, params: P });
-  const { legs, total } = nearest(P.M);
+  const col = P.method === 'oszlop';
+  const { legs, total } = nearest(col ? transpose(P.M) : P.M);
   t.statement = [
     p('A vállalat késztermékraktárából az elosztóraktárak kiszolgálásához napi túrajáratot kell tervezni. A táblázat a raktárak egymástól való távolságát tartalmazza kilométerben (sor: honnan, oszlop: hová).'),
     table(['Honnan \\ Hová', ...NODES], P.M.map((row, i) => [NODES[i], ...row.map((d, j) => (i === j ? '–' : d))])),
-    p('Határozza meg sorminimum módszerrel a túrajárat optimális kiszolgálási sorrendjét úgy, hogy a legkevesebb távolságot tegye meg, és az utolsó elosztóraktár kiszolgálása után visszatérjen a központi raktárba!'),
+    p(`Határozza meg ${col ? 'oszlopminimum' : 'sorminimum'} módszerrel a túrajárat optimális kiszolgálási sorrendjét úgy, hogy a legkevesebb távolságot tegye meg, és az utolsó elosztóraktár kiszolgálása után visszatérjen a központi raktárba!`),
   ];
   addForm(t, 'leg', null, ['Indulási raktár', 'Érkező raktár', 'Távolság (km)'], legs.map((l) => ({
     label: '', fields: [
@@ -51,16 +55,20 @@ function build(P) {
     ], pts: 0.5, calc: false,
   })));
   addForm(t, 'tot', null, ['', 'Összesen (km)'], [{ label: 'Összesen', field: { expect: total, unit: 'km' }, pts: 0.5, calc: false }]);
-  t.hints = [
+  t.hints = col ? [
+    'Oszlopminimum: a késztermékraktár OSZLOPÁBAN keresd a legkisebb értéket – ez az a raktár, ahová először mész. Utána mindig annak a raktárnak az oszlopában keresel, ahol éppen vagy, a még nem érintett raktárak közül.',
+    'Ez ugyanaz, mint a sorminimum, csak a táblázatot oszloponként olvasod (a táblázat „tükrözve”). A távolságnak a megtalált értéket írd be.',
+    `Első lépés: a késztermékraktár oszlopában a legkisebb érték ${legs[0].d} km → ${NODES[legs[0].to]}.`,
+  ] : [
     'Sorminimum: a késztermékraktár SORÁBAN keresd a legkisebb távolságot – oda mész először. Onnan annak a raktárnak a sorában keresed a legkisebbet, de csak a még nem érintett raktárak közül.',
     'A már meglátogatott raktárakat (és a kiinduló raktárt) mindig hagyd ki. Ha mindegyik megvan, az utolsó raktár sorából a késztermékraktárba vezető távolsággal térsz vissza.',
     `Első lépés: a késztermékraktár sorában a legkisebb érték ${legs[0].d} km → ${NODES[legs[0].to]}.`,
   ];
   t.solution = [
     ...legs.map((l) => p(l.row.length
-      ? `${NODES[l.from]} sora (még nem érintettek): ${l.row.map((x) => `${NODES[x.j].replace(' raktár', '')}: ${x.d}`).join(' / ')} → legkisebb ${l.d} km → ${NODES[l.to]}`
+      ? `${NODES[l.from]} ${col ? 'oszlopa' : 'sora'} (még nem érintettek): ${l.row.map((x) => `${NODES[x.j].replace(' raktár', '')}: ${x.d}`).join(' / ')} → legkisebb ${l.d} km → ${NODES[l.to]}`
       : `${NODES[l.from]} → vissza a késztermékraktárba: ${l.d} km`)),
-    note(`Összesen: ${total} km. A sorminimum heurisztika – nem garantálja a globálisan legrövidebb kört, de a feladat ezt a módszert kéri.`),
+    note(`Összesen: ${total} km. A módszer heurisztika – nem garantálja a globálisan legrövidebb kört, de a feladat ezt a módszert kéri.`),
   ];
   return t;
 }

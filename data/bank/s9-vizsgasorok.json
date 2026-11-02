@@ -1,0 +1,513 @@
+[
+{
+"id": "vizs-01",
+"topic": "Vizsgafeladatsorok",
+"type": "truefalse",
+"prompt": "Döntse el, hogy igazak vagy hamisak-e az alábbi állítások! (A vizsgán minden döntést röviden indokolni is kell.)",
+"statements": [
+[
+"Az ISO-minősítéssel rendelkező cégek terméke biztos, hogy megfelel minden szabványnak.",
+false
+],
+[
+"Kis értékű termék beszerzési folyamata rutinbeszerzésnek számít.",
+false
+],
+[
+"A lean logisztikának nem az a célja, hogy a vevőt a lehető legmagasabb minőségi színvonalon szolgáljuk ki.",
+true
+],
+[
+"A beszállítók ellenőrzése és minősítése nem kizárólag minőségbiztosítási célokat szolgál.",
+true
+]
+],
+"explanation": "Indoklások a megoldókulcsból: az ISO-minősítés csak azt jelenti, hogy a vállalat egy vállalt szabványnak megfelel. A rutinbeszerzést nem az érték, hanem a rendszeres, előre ismert igény határozza meg. A lean célja a vevő által ELVÁRT minőség. A beszállítók minősítésének gazdasági és jogi okai is vannak (pl. teljesítette-e a szerződést).",
+"source": "vizsga"
+},
+{
+"id": "vizs-02",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "Ha minden 4. beszállítás mennyiségi hibás és minden 5. minőségi hibás, és nincs olyan beszállítás, amiben többféle hiba is lenne, akkor a beszállítás összteljesítménye ….%.",
+"options": [
+"55",
+"45",
+"10"
+],
+"answer": 0,
+"explanation": "Mennyiségi hiba: 1/4 = 25%, minőségi hiba: 1/5 = 20% → összesen 45% hibás → 100 − 45 = 55%.",
+"source": "vizsga"
+},
+{
+"id": "vizs-03",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "ABC-analízist alkalmazunk. Ha az „A” kategóriás termékek a forgalom 60%-át teszik ki, ami 15 000 db terméket jelent évente, akkor a „B” és „C” kategóriás termékek éves együttes forgalma …… db.",
+"options": [
+"10 000",
+"25 000",
+"40"
+],
+"answer": 0,
+"explanation": "15 000 ÷ 60 × 40 = 10 000 db.",
+"source": "vizsga"
+},
+{
+"id": "vizs-04",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "Egy időszakban 10 kiszállításból 5 esetben fordult elő késés. A késések időtartama 10, 12, 14, 15 és 16 óra volt. Az egy késve elvégzett munkára jutó átlagos késés ….. óra.",
+"options": [
+"13,4",
+"6,7",
+"16,75"
+],
+"answer": 0,
+"explanation": "Összes késés 67 óra; a KÉSVE elvégzett munkák száma 5 → 67 ÷ 5 = 13,4 óra. (A 6,7 az összes, 10 kiszállításra jutó átlag lenne.)",
+"source": "vizsga"
+},
+{
+"id": "vizs-05",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "Egy alapanyag beszerzési ára 350 Ft/kg. Ha a szállító 1 500 kg feletti rendelés esetén 5% kedvezményt ad, akkor 1 600 kg beszerzésének értéke összesen …… Ft.",
+"options": [
+"532 000",
+"498 750",
+"332,5"
+],
+"answer": 0,
+"explanation": "1 600 × 350 = 560 000 Ft; 5% kedvezmény = 28 000 Ft → 532 000 Ft.",
+"source": "vizsga"
+},
+{
+"id": "vizs-06",
+"topic": "Vizsgafeladatsorok",
+"type": "truefalse",
+"prompt": "Döntse el, hogy igazak vagy hamisak-e az alábbi állítások!",
+"statements": [
+[
+"A logisztikai szolgáltatók az ellátási láncban másodlagos csatornatagok.",
+true
+],
+[
+"Az outsourcingnak nincs kockázata.",
+false
+],
+[
+"Az MRP része az ERP-nek.",
+true
+],
+[
+"Ha egy szállítmány nem késett, akkor biztosan megfelelt a logisztikai 9M-ből a megfelelő időcélnak.",
+false
+],
+[
+"Az áruátvétel általában nem tartozik a stratégiai szintű beszerzés feladatai közé.",
+true
+]
+],
+"explanation": "A szolgáltatók támogatják az anyagáramlást, de nem szereznek tulajdonjogot (másodlagos tagok). A kiszervezésnek van kockázata (minőség, információáramlás, függőség). Az ERP vállalatirányítási rendszer, része az MRP. A megfelelő időt a KORÁBBAN érkező szállítmány is sérti. Az áruátvétel operatív feladat.",
+"source": "vizsga"
+},
+{
+"id": "vizs-07",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "Ha egy termék listaárából a beszállító 10% kedvezményt ad, akkor a listaár a kedvezményes árhoz képest … százalékkal nagyobb.",
+"options": [
+"11,1",
+"10,0",
+"110,0"
+],
+"answer": 0,
+"explanation": "Listaár 100, kedvezményes ár 90 → (100 − 90) ÷ 90 × 100 = 11,1%. A viszonyítási alap a kedvezményes ár!",
+"source": "vizsga"
+},
+{
+"id": "vizs-08",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "FIFO rendelésütemezést alkalmazunk. Ha a beérkezett rendelések időrendi sorrendben R1, R2, R3, R4, akkor a feldolgozási sorrend …",
+"options": [
+"R1, R2, R3, R4",
+"R4, R3, R2, R1",
+"ennyi információból nem állapítható meg"
+],
+"answer": 0,
+"explanation": "FIFO = először beérkezett, először kiszolgálva: a beérkezés sorrendje.",
+"source": "vizsga"
+},
+{
+"id": "vizs-09",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "Ha egy folyamatrendszerű termelési folyamatban a maximális termelés óránként 10 darab, az átfutási idő 30 perc, akkor a ciklusidő ……. perc.",
+"options": [
+"6",
+"3",
+"2"
+],
+"answer": 0,
+"explanation": "Ciklusidő = 60 perc ÷ 10 db = 6 perc. Az átfutási idő (30 perc) az összes műveleti idő, a ciklusidőhöz nem kell.",
+"source": "vizsga"
+},
+{
+"id": "vizs-10",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "ABC-analízist alkalmazunk. A kategóriabesorolás 20:40:40. Ha a cikkek száma 25, akkor a B és a C kategóriába tartozó cikkek száma együttesen …….. cikk.",
+"options": [
+"20",
+"10",
+"5"
+],
+"answer": 0,
+"explanation": "B + C = 80% → 25 × 0,8 = 20 cikk.",
+"source": "vizsga"
+},
+{
+"id": "vizs-11",
+"topic": "Vizsgafeladatsorok",
+"type": "single",
+"prompt": "Ha minden 15. kiszállítás hibás, akkor a kiszolgálási színvonal ….%.",
+"options": [
+"93,33",
+"6,67",
+"150"
+],
+"answer": 0,
+"explanation": "15-ből 14 megfelelő → 14 ÷ 15 × 100 = 93,33%. (A 6,67% a hibaarány.)",
+"source": "vizsga"
+},
+{
+"id": "vizs-12",
+"topic": "Vizsgafeladatsorok",
+"type": "truefalse",
+"prompt": "Döntse el, hogy igazak vagy hamisak-e az alábbi állítások!",
+"statements": [
+[
+"A DRP modell alkalmazása és a kiszolgálási színvonal alakulása között nincs érdemi kapcsolat.",
+false
+],
+[
+"A ciklikus készletgazdálkodási modell alkalmazásakor azonos időközönként azonos tételnagyságban rendelünk.",
+false
+],
+[
+"A lean vállalat a tevékenységeit elsősorban az alapján alakítja ki, hogy a vevő számára mi az érték.",
+true
+],
+[
+"A Just in Time (JIT) igazi célja a készletcsökkentés.",
+false
+],
+[
+"A költségigény-módszer használatakor különböző költségkategóriák alapján arányszámokat határoznak meg, és ezek alapján hasonlítják össze a szállítók teljesítményét.",
+true
+],
+[
+"Az egyszerű kategorikus módszer alkalmazásával a szállítóértékelés során objektív eredmények adódnak.",
+false
+]
+],
+"explanation": "A DRP hatékonyabb áruterítést, jobb kiszolgálást tesz lehetővé. Ciklikus modellnél az időköz állandó, a tételnagyság a szükséglethez igazodik. A JIT lényege, hogy az anyag a megfelelő időben érkezzen (a kis készlet csak következmény). A kategorikus módszer szubjektív.",
+"source": "vizsga"
+},
+{
+"id": "vizs-13",
+"topic": "Vizsgafeladatsorok",
+"type": "truefalse",
+"prompt": "Döntse el, hogy az alábbi állítások igazak vagy hamisak!",
+"statements": [
+[
+"A termékfelelősség a gyártó felelőssége a termék hibás működéséért.",
+true
+],
+[
+"A disztribúciós csatornarendszer vertikális tagoltsága azt mutatja meg, hogy hány hasonló funkciójú pont van a csatornarendszer egy-egy lépcsőjében.",
+false
+],
+[
+"A Kanban-kártyát pull típusú anyagellátási rendszerben alkalmazzák.",
+true
+],
+[
+"A halszálka-diagram azt mutatja meg, hogy a következmények 80%-a az okok 20%-ára vezethető vissza.",
+false
+],
+[
+"A vevőérték a teljes vevőérték és annak költsége közötti különbség.",
+true
+],
+[
+"A logisztikát a rendszerszemlélet jellemzi.",
+true
+]
+],
+"explanation": "A vertikális tagoltság a csatorna SZINTJEINEK száma (a horizontális az egy szinten lévő pontoké). A 80/20 szabály a Pareto-elv, nem a halszálka- (Ishikawa-) diagram.",
+"source": "vizsga"
+},
+{
+"id": "vizs-14",
+"topic": "Vizsgafeladatsorok",
+"type": "match",
+"prompt": "Kösse össze a fogalmakat a megfelelő meghatározásokkal!",
+"pairs": [
+[
+"Szabvány",
+"Minőségi követelmények meghatározója."
+],
+[
+"Érték elve",
+"Azok a tevékenységek, amelyek hozzáadott értéket tartalmaznak."
+],
+[
+"Elállási jog",
+"Webes vásárlás esetén a fogyasztó 14 napon belül jogosult indokolás nélkül elállni a szerződéstől."
+],
+[
+"Minőség",
+"Olyan jellemzők összessége, amelyek alkalmassá teszik a terméket vagy szolgáltatást valamilyen szükséglet kielégítésére."
+],
+[
+"Benchmarking",
+"A termelési folyamatok vagy a termék/szolgáltatás összehasonlítása a versenytársakkal."
+],
+[
+"Kiszolgálási idő",
+"Az igény felmerülésétől annak teljesítéséig eltelt időtartam."
+],
+[
+"Stratégiai kontrolling",
+"A vállalat jövőjének hosszú távú biztosítása megfelelő tervezéssel és irányítással."
+],
+[
+"Vagyonmegállapító leltár",
+"Az éves mérleg valódiságát alátámasztó dokumentáció."
+],
+[
+"Készlettartási költség",
+"A készletekben fekvő tőke elmaradt haszna."
+],
+[
+"Auditálás",
+"Független szervezet igazolása arról, hogy a vizsgált vállalat minőségirányítási rendszerének működése megfelel valamely szabványnak."
+]
+],
+"explanation": "Vizsgafeladatsor megoldókulcsa alapján.",
+"source": "vizsga"
+},
+{
+"id": "vizs-15",
+"topic": "Vizsgafeladatsorok",
+"type": "match",
+"prompt": "Párosítsa a szakmai kifejezéseket a meghatározásokkal!",
+"pairs": [
+[
+"Kaizen elv",
+"Fejlesztési folyamat, melynek eszköze elsősorban az alkalmazottak kreativitása."
+],
+[
+"Pareto-elv",
+"Az elemzés a 80/20 szabályon alapszik: a problémák 80%-a mögött a kiváltó okok 20%-a áll."
+],
+[
+"Ciklusidő",
+"Az az időtartam, amilyen gyakorisággal egy terméknek el kellene készülnie a vevői rendelések alapján."
+],
+[
+"MRP II",
+"A fejlesztett változat a termelési folyamat erőforrásait is megtervezi, a szükséges kapacitások tervezését is magában foglalja."
+],
+[
+"TPS (Toyota Production System)",
+"A tömegtermeléssel szemben elsődleges a vevői igények kielégítése; két alapelve az ember tisztelete és a veszteségek folyamatos csökkentése."
+],
+[
+"Összköltség-szemlélet",
+"Az egyik költség csökkentése más költség emelkedéséhez vezethet, aminek következtében nőhet az összes költség."
+],
+[
+"Kanban rendszer",
+"Az alkalmazott „kártyák” elsődleges funkciója az utasítás a termelésre vagy anyagmozgatásra; a JIT megvalósításának alapvető eszköze."
+],
+[
+"PDCA-ciklus",
+"A folyamatos fejlesztés alapmodellje: a tevékenységeket újra és újra meg kell ismételni a fejlődés érdekében."
+],
+[
+"OPT",
+"A „korlátok elmélete” – a szűk keresztmetszetek azonosítása."
+],
+[
+"MRP",
+"Kezdetben az előállításhoz szükséges inputok biztosítása, az anyagszükséglet meghatározása állt a középpontjában."
+]
+],
+"explanation": "Vizsgafeladatsor megoldókulcsa alapján.",
+"source": "vizsga"
+},
+{
+"id": "vizs-16",
+"topic": "Vizsgafeladatsorok",
+"type": "match",
+"prompt": "Párosítsa össze az alábbi lean kifejezéseket a hozzájuk tartozó magyarázattal!",
+"pairs": [
+[
+"muda",
+"veszteség"
+],
+[
+"ciklusidő",
+"egy munkadarab elkészülésének időszükséglete"
+],
+[
+"kaizen",
+"apró lépésekből álló, végtelen fejlesztési folyamat"
+],
+[
+"kanban",
+"vizuális irányítási, utasítási eszköz (kártya)"
+],
+[
+"lokáció",
+"feltöltő rendszerben alkalmazott tárolóhely"
+],
+[
+"TPM",
+"teljes körű hatékony karbantartás"
+],
+[
+"TQM",
+"teljes körű minőségirányítás"
+],
+[
+"gemba",
+"az értékteremtés (gyártás) helyszíne"
+],
+[
+"jidoka",
+"minél jobb minőség elérése minél alacsonyabb költségen"
+],
+[
+"készlet",
+"felhalmozott anyagmennyiség"
+]
+],
+"explanation": "A vizsgafeladatsor megoldókulcsa (H F D E I A J B C G) alapján.",
+"source": "vizsga"
+},
+{
+"id": "vizs-17",
+"topic": "Vizsgafeladatsorok",
+"type": "match",
+"prompt": "Egészítse ki a lean menedzsmentről szóló mondatokat! (Párosítsa a hiányos mondatot a hiányzó szóval.)",
+"pairs": [
+[
+"A lean menedzsment célja a … mindennemű formájának megszüntetése.",
+"pazarlás"
+],
+[
+"Az így kialakított folyamatok gyorsabbak, megbízhatóbbak, jobb …-et eredményeznek,",
+"minőség"
+],
+[
+"…és a folyamatok … (kevesebb költséggel működnek).",
+"költséghatékonyabbak"
+],
+[
+"A kínálati oldal karcsúsított folyamatai a keresleti oldalon … vevői értéket teremtenek.",
+"magasabb"
+],
+[
+"… alkalmazottal és eszközzel, kevesebb idő alatt nyújt értéket…",
+"kevesebb"
+],
+[
+"…kevesebb erőforrással nyújt … értéket a vevőnek.",
+"több"
+],
+[
+"A lean megvalósítása a vevői igények alapján, … rendszerben történik.",
+"pull (húzásos)"
+],
+[
+"A pull termelésirányítási rendszert a … támogatja, …",
+"kanban"
+],
+[
+"…egy olyan kártya, ami valamilyen szállítási, mozgatási, termelési művelet elvégzésére ad …",
+"utasítást"
+],
+[
+"A lean filozófiája a folyamatos fejlesztés, a …, mely a haladást kis fejlesztési lépésekkel valósítja meg.",
+"kaizen"
+]
+],
+"explanation": "A vizsgafeladatsor megoldókulcsa alapján (kiegészítendő szöveg).",
+"source": "vizsga"
+},
+{
+"id": "vizs-18",
+"topic": "Vizsgafeladatsorok",
+"type": "essay",
+"prompt": "Funkcionális értelemben hogyan csoportosíthatjuk a készleteket? Mutassa be mindegyiket (ötöt) egy-egy mondatban!",
+"model": "Funkcionális csoportok: tervezett (folyó) készlet – a normál felhasználást fedezi két beszerzés között; sorozatnagyság miatti készlet – a gazdaságos tételnagyságban rendelés miatt keletkezik; biztonsági készlet – a kereslet és az utánpótlás bizonytalanságát fedezi; szállítási (úton lévő) készlet – a szállítás ideje alatt az anyagáramlásban lévő készlet; tartalékalkatrész-készlet – a gépek, berendezések javításához tartott készlet.",
+"keyPoints": [
+"tervezett készlet",
+"sorozatnagyság miatti készlet",
+"biztonsági készlet",
+"szállítási készlet",
+"tartalékalkatrész-készlet"
+],
+"source": "vizsga"
+},
+{
+"id": "vizs-19",
+"topic": "Vizsgafeladatsorok",
+"type": "essay",
+"prompt": "Mire alkalmazható az FMEA-módszer, és melyek a lépései (sorrendben)?",
+"model": "Az FMEA (hibamód- és hatáselemzés) hibaelemzésre, a lehetséges hibák feltérképezésére és megelőzésére alkalmazható. Lépései: 1. a lehetséges hibák összeállítása; 2. a lehetséges hibák súlyozása; 3. ajánlott javítások, felelősök és határidők kijelölése; 4. a döntés jóváhagyása; 5. az intézkedések hatásának ellenőrzése.",
+"keyPoints": [
+"hibaelemzés, hibák feltérképezése/megelőzése",
+"lehetséges hibák összeállítása",
+"hibák súlyozása",
+"javítások, felelősök, határidők",
+"döntés jóváhagyása",
+"intézkedések hatásának ellenőrzése"
+],
+"source": "vizsga"
+},
+{
+"id": "vizs-20",
+"topic": "Vizsgafeladatsorok",
+"type": "essay",
+"prompt": "A szállítási szolgáltatás színvonalmutatói közül mit fejez ki a szállítás minősége és megbízhatósága? Milyen további komponensek alakítják a szállítási szolgáltatás színvonalát?",
+"model": "A szállítás minősége azt mutatja, hogy a szállító milyen arányban szállít kifogástalan árut. A szállítás megbízhatósága azt fejezi ki, hogy milyen mértékben tudja tartani a szállító a megadott határidőket. További komponensek: szállítási idő, a kiszállítás pontossága, rugalmasság, ár.",
+"keyPoints": [
+"minőség: kifogástalanul szállított áruk aránya",
+"megbízhatóság: a határidők tartása",
+"szállítási idő",
+"pontosság",
+"rugalmasság",
+"ár"
+],
+"source": "vizsga"
+},
+{
+"id": "vizs-21",
+"topic": "Vizsgafeladatsorok",
+"type": "essay",
+"prompt": "Írja le, mit ért a szakirodalom a készlet fogalmán!",
+"model": "Készletnek nevezzük azokat az anyagi javakat, amelyeket egy termelő vagy szolgáltató vállalkozás azért halmoz fel, hogy a jövőben azokat a megrendelésekhez, a kereslethez igazítva használja fel.",
+"keyPoints": [
+"anyagi javak",
+"felhalmozás (termelő/szolgáltató vállalkozás)",
+"jövőbeni felhasználás",
+"a kereslethez/megrendelésekhez igazítva"
+],
+"source": "vizsga"
+}
+]

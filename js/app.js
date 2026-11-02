@@ -262,7 +262,7 @@ function card(i) {
     h('span', { class: 'item-no' }, `${i + 1}.`),
     h('span', { class: 'badge' }, isT ? TYPE_LABEL[q.type] : 'Gyakorlati'),
     h('span', { class: 'badge info' }, isT ? q.topic : q.title),
-    isT && settings.showSourceBadge ? (q.source === 'redmenta' ? h('span', { class: 'badge ok', title: 'A megoldás a Redmenta javítókulcsán alapul' }, 'Redmenta-kulcs') : h('span', { class: 'badge warn', title: 'A megoldást Claude készítette – nincs hozzá javítókulcs' }, 'Saját megoldás')) : null,
+    isT && settings.showSourceBadge ? (q.source === 'redmenta' ? h('span', { class: 'badge ok', title: 'A megoldás a Redmenta javítókulcsán alapul' }, 'Redmenta-kulcs') : q.source === 'vizsga' ? h('span', { class: 'badge ok', title: 'Korábbi vizsgafeladatsor megoldókulcsa alapján' }, 'Vizsgakulcs') : h('span', { class: 'badge warn', title: 'A megoldást Claude készítette – nincs hozzá javítókulcs' }, 'Saját megoldás')) : null,
     !isT && it.ref.preset === 'vizsga' ? h('span', { class: 'badge accent' }, 'Vizsgapélda') : null,
     S.filled?.[i] ? h('span', { class: 'badge warn' }, 'Kitöltve a megoldással') : null,
     h('span', { class: 'item-score' }, checked ? (sc.excluded ? 'nem pontozott' : `${fmt(sc.got)} / ${fmt(sc.max)} p`) : `${fmt(isT ? maxPoints(q) : q.points)} p`)));

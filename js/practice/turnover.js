@@ -37,8 +37,8 @@ function build(P) {
   ];
   addForm(t, 'r', null, ['Adat/Mutató', 'Eredmény'], [
     { label: 'Átlagkészlet (millió Ft) – kronologikus átlaggal', field: { expect: roundTo(avg, 2), dec: 2, tol: 0.011, unit: 'millió Ft' }, pts: 1 },
-    { label: 'Forgási sebesség (fordulat/év)', field: { expect: roundTo(speed, 2), dec: 2, tol: 0.011, unit: 'fordulat' }, pts: 1 },
-    { label: 'Forgási idő (nap)', field: { expect: roundTo(time, 2), dec: 2, tol: 0.06, unit: 'nap' }, pts: 1 },
+    { label: 'Forgási sebesség (fordulat/év)', field: { expect: roundTo(speed, 2), accept: [roundTo(speed, 1), Math.round(speed)], dec: 2, tol: 0.011, unit: 'fordulat' }, pts: 1 },
+    { label: 'Forgási idő (nap)', field: { expect: roundTo(time, 2), accept: [roundTo(time, 1), Math.round(time), roundTo(P.days / Math.round(speed), 1)], dec: 2, tol: 0.06, unit: 'nap' }, pts: 1 },
   ]);
   t.hints = [
     'Kronologikus átlag: az első és az utolsó adatot csak FELE súllyal vesszük figyelembe, az osztó pedig az adatok száma mínusz egy.',

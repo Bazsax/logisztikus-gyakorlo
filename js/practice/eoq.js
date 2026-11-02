@@ -26,12 +26,14 @@ function build(P) {
   const H = P.price * P.h / 100;
   const Qexact = Math.sqrt(2 * P.D * P.S / H);
   const Q = Math.round(Qexact);
+  const Qc = Math.ceil(Qexact - 1e-9);
   const daily = P.D / 360;
   const ropExact = daily * P.L + P.SS;
-  const rop = Math.round(ropExact);
+  const rop = Math.round(daily) * P.L + P.SS; // a vizsgamegoldások a napi felhasználást előbb egészre kerekítik
   const nOrders = P.D / Q;
   const ordM = nOrders * P.S / 12;
   const holdM = (Q / 2) * H / 12;
+  const alt = (f) => [...new Set([Math.round(f(Qc))])].filter((v) => v !== Math.round(f(Q)));
 
   t.statement = [
     p('Egy alapanyag felhasználása viszonylag állandó és az év közbeni eloszlása egyenletes.'),
@@ -39,10 +41,10 @@ function build(P) {
     p('Kerekítési pontosság: egész. Részszámításait a megadott táblázatban vezesse le!'),
   ];
   addForm(t, 'q', null, ['Kérdés', 'Eredmény'], [
-    { label: 'Hány darab az optimális rendelési tételnagyság? (db)', field: { expect: Q, unit: 'db' }, pts: 2 },
-    { label: `Hány darabos készletszintnél kell feladni a megrendelést, ha a rendelés teljesítésének átfutási ideje ${P.L} naptári nap, és a cégvezetés határozata alapján ${fmt(P.SS)} darab biztonsági készletet tartanak? (db)`, field: { expect: rop, accept: [Math.ceil(ropExact)], unit: 'db' }, pts: 2 },
-    { label: 'Mennyi a havi rendelési (előkészítési) költség? (Ft)', field: { expect: Math.round(ordM), tol: 1.01, unit: 'Ft' }, pts: 1 },
-    { label: 'Mennyi a havi készlettartási költség? (Ft) (a biztonsági készlettől tekintsen el)', field: { expect: Math.round(holdM), tol: 1.01, unit: 'Ft' }, pts: 1 },
+    { label: 'Hány darab az optimális rendelési tételnagyság? (db)', field: { expect: Q, accept: Qc !== Q ? [Qc] : [], unit: 'db' }, pts: 2 },
+    { label: `Hány darabos készletszintnél kell feladni a megrendelést, ha a rendelés teljesítésének átfutási ideje ${P.L} naptári nap, és a cégvezetés határozata alapján ${fmt(P.SS)} darab biztonsági készletet tartanak? (db)`, field: { expect: rop, accept: [Math.round(ropExact), Math.ceil(ropExact - 1e-9)].filter((v) => v !== rop), unit: 'db' }, pts: 2 },
+    { label: 'Mennyi a havi rendelési (előkészítési) költség? (Ft)', field: { expect: Math.round(ordM), accept: alt((q) => P.D / q * P.S / 12), tol: 1.01, unit: 'Ft' }, pts: 1 },
+    { label: 'Mennyi a havi készlettartási költség? (Ft) (a biztonsági készlettől tekintsen el)', field: { expect: Math.round(holdM), accept: alt((q) => q / 2 * H / 12), tol: 1.01, unit: 'Ft' }, pts: 1 },
   ]);
   t.hints = [
     'Wilson-képlet: Q* = √(2 × éves szükséglet × rendelési költség ÷ egységnyi éves készlettartási költség). Az egységnyi tartási költség = ár × tartási %.',
@@ -51,7 +53,8 @@ function build(P) {
   ];
   t.solution = [
     p(`Q* = √(2 × ${fmt(P.D)} × ${fmt(P.S)} ÷ ${fmt(H)}) = √${fmt(Math.round(2 * P.D * P.S / H))} = ${fmt(Qexact, 2)} ≈ ${fmt(Q)} db`),
-    p(`Rendelési készletszint = ${fmt(daily, 2)} × ${P.L} + ${fmt(P.SS)} = ${fmt(ropExact, 2)} ≈ ${fmt(rop)} db`),
+    p(`Napi felhasználás: ${fmt(P.D)} ÷ 360 = ${fmt(daily, 2)} ≈ ${fmt(Math.round(daily))} db → rendelési készletszint = ${fmt(Math.round(daily))} × ${P.L} + ${fmt(P.SS)} = ${fmt(rop)} db`),
+    note(`A tanfolyami vizsgamegoldások a napi felhasználást előbb egészre kerekítik. Kerekítés nélkül ${fmt(ropExact, 2)} ≈ ${fmt(Math.round(ropExact))} db jönne ki – ezt is elfogadjuk. Az EOQ-t néhány megoldás felfelé kerekíti (${fmt(Qc)} db), ez is elfogadott.`),
     p(`Rendelések száma: ${fmt(P.D)} ÷ ${fmt(Q)} = ${fmt(nOrders, 2)} /év → éves rendelési költség ${fmt(Math.round(nOrders * P.S))} Ft → havi ${fmt(Math.round(ordM))} Ft`),
     p(`Átlagkészlet ${fmt(Q)} ÷ 2 = ${fmt(Q / 2)} db → éves tartási költség ${fmt(Math.round(Q / 2 * H))} Ft → havi ${fmt(Math.round(holdM))} Ft`),
     note('Ellenőrzés: az optimumban a rendelési és a készlettartási költség megegyezik.'),
