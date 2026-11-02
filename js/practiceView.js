@@ -7,6 +7,8 @@ export function renderBlocks(blocks) {
     if (b.type === 'p') return h('p', null, b.text);
     if (b.type === 'ul') return h('ul', null, b.items.map((x) => h('li', null, x)));
     if (b.type === 'note') return h('div', { class: 'note' }, b.text);
+    if (b.type === 'f') return h('div', { class: 'formula' }, b.text);
+    if (b.type === 'tip') return h('div', { class: 'tipbox' }, h('strong', null, 'Figyelj! '), b.text);
     if (b.type === 'table') {
       return h('div', { class: 'tbl-wrap' }, h('table', null,
         h('thead', null, h('tr', null, b.head.map((c) => h('th', null, c)))),
@@ -128,4 +130,16 @@ export function practiceAiText(t) {
 
 export function practiceSolutionText(t) {
   return fieldLabels(t).filter((x) => x.field.expect !== null).map((x) => `${x.label}: ${expectText(x.field)}`).join('\n');
+}
+
+/** Lépésről lépésre levezetés lenyitható lépésekkel. */
+export function renderWalkthrough(t) {
+  const steps = t.walkthrough || [];
+  const box = h('div', { class: 'panel walk' }, h('div', { class: 'row' }, h('h4', { style: { margin: 0 } }, `Levezetés lépésről lépésre (${steps.length} lépés)`), h('span', { class: 'spacer' }),
+    h('button', { class: 'btn ghost sm', onclick: () => box.querySelectorAll('details').forEach((d) => { d.open = true; }) }, 'Mind kinyit'),
+    h('button', { class: 'btn ghost sm', onclick: () => box.querySelectorAll('details').forEach((d) => { d.open = false; }) }, 'Mind becsuk')));
+  steps.forEach((st, k) => box.appendChild(h('details', { class: 'wstep', open: k === 0 },
+    h('summary', null, h('span', { class: 'wnum' }, String(k + 1)), st.title),
+    h('div', { class: 'wbody statement' }, renderBlocks(st.blocks)))));
+  return box;
 }

@@ -1,5 +1,5 @@
 // 8. feladattípus – Áruelosztási körjárat sorminimum módszerrel, 3 pont
-import { makeTask, addForm, p, table, note } from './common.js';
+import { makeTask, addForm, p, table, note , step, f, tip } from './common.js';
 
 export const meta = { kind: 'route', title: 'Körjárat optimalizálása (sor-/oszlopminimum)', points: 3, exam: true, order: 8 };
 
@@ -74,6 +74,20 @@ function build(P) {
       ? `${NODES[l.from]} ${col ? 'oszlopa' : 'sora'} (még nem érintettek): ${l.row.map((x) => `${NODES[x.j].replace(' raktár', '')}: ${x.d}`).join(' / ')} → legkisebb ${l.d} km → ${NODES[l.to]}`
       : `${NODES[l.from]} → vissza a késztermékraktárba: ${l.d} km`)),
     note(`Összesen: ${total} km. A módszer heurisztika – nem garantálja a globálisan legrövidebb kört, de a feladat ezt a módszert kéri.`),
+  ];
+
+  const short = (n) => NODES[n].replace(' raktár', '');
+  t.walkthrough = [
+    step(`A ${col ? 'oszlopminimum' : 'sorminimum'} módszer`,
+      p('Ez egy „mindig a legközelebbi még nem látogatott raktárba megyünk” típusú (mohó) eljárás. Gyors és egyszerű, de nem garantálja a lehető legrövidebb kört.'),
+      p(col ? 'Oszlopminimumnál a táblázatot OSZLOPONKÉNT olvassuk: annak a raktárnak az oszlopában keressük a legkisebb értéket, ahol éppen vagyunk.' : 'Sorminimumnál annak a raktárnak a SORÁBAN keressük a legkisebb távolságot, ahol éppen vagyunk.'),
+      tip('Mindig hagyd ki a már meglátogatott raktárakat és a kiinduló raktárt – csak a kör legvégén megyünk vissza.')),
+    ...legs.map((l, k) => step(l.row.length ? `${k + 1}. lépés: indulás innen: ${NODES[l.from]}` : `${k + 1}. lépés: vissza a kiinduló raktárba`,
+      l.row.length
+        ? [f(`${NODES[l.from]} ${col ? 'oszlopa' : 'sora'}, még nem érintett raktárak:\n${l.row.map((x) => `  ${short(x.j)}: ${x.d} km`).join('\n')}\n→ legkisebb: ${l.d} km → ${NODES[l.to]}`)]
+        : [p(`Minden raktárt meglátogattunk, ${NODES[l.from]}-ból vissza kell menni: ${l.d} km.`)])),
+    step('Összegzés',
+      f(`${legs.map((l) => `${short(l.from)} → ${short(l.to)}: ${l.d}`).join('\n')}\nösszesen: ${legs.map((l) => l.d).join(' + ')} = ${total} km`)),
   ];
   return t;
 }

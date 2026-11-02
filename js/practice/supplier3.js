@@ -1,5 +1,5 @@
 // Kiegészítő típus – Három beszállító értékelése %-os formában, tetszőleges súlyokkal (vizsgafeladatsorokból)
-import { makeTask, addForm, p, table, note } from './common.js';
+import { makeTask, addForm, p, table, note , step, f, tip } from './common.js';
 import { fmt, roundTo } from '../util.js';
 
 export const meta = { kind: 'supplier3', title: 'Három beszállító értékelése (%-os módszer)', points: 9, exam: false, order: 14 };
@@ -48,6 +48,13 @@ function build(P) {
   t.solution = [
     ...P.sup.map((s, i) => p(`${s.name}: ${pc[i].map((v, k) => `${P.weights[k]} × ${fmt(v, 1)}`).join(' + ')} = ${fmt(pc[i].reduce((a, v, k) => a + v * P.weights[k], 0), 1)} ÷ ${W} = ${fmt(res[i], 1)}%`)),
     note(`A legmagasabb kiszolgálási színvonal: ${best}. Ha az értékek közel azonosak, érdemes egyéb szempontokat is mérlegelni.`),
+  ];
+
+  t.walkthrough = [
+    step('Teljesítés szempontonként (%)', p('Megfelelő szállítás ÷ összes szállítás × 100; árnál a legalacsonyabb ár ÷ saját ár × 100.'),
+      ...P.sup.map((s, i) => f(`${s.name}: ${s.ok.map((x, k) => `${CRIT[k]} ${x}/${s.T} = ${fmt(pc[i][k], 1)}%`).join('; ')}; ár ${minP}/${s.price} = ${fmt(pc[i][3], 1)}%`))),
+    step('Súlyozott átlag', p(`A súlyok összege ${W}, ezzel osztunk.`), ...P.sup.map((s, i) => f(`${s.name}: (${pc[i].map((v, k) => `${P.weights[k]}×${fmt(v, 1)}`).join(' + ')}) ÷ ${W} = ${fmt(res[i], 1)}%`))),
+    step('Döntés', p(`A legjobb: ${best}.`), tip('Ha a súlyok összege nem 100, ne ossz 100-zal – a súlyok összegével kell osztani.')),
   ];
   return t;
 }

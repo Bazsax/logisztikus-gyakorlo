@@ -1,5 +1,5 @@
 // 7. feladattípus – Termelési jellemzők (kibocsátás, ciklusidő, létszám), 3 pont
-import { makeTask, addForm, p, ul, note } from './common.js';
+import { makeTask, addForm, p, ul, note , step, f, tip } from './common.js';
 import { fmt, LETTERS } from '../util.js';
 
 export const meta = { kind: 'production', title: 'Termelési jellemzők: kibocsátás, ciklusidő, létszám', points: 3, exam: true, order: 7 };
@@ -59,6 +59,28 @@ function build(P) {
     p(`1 fő esetén: 60 ÷ ${sum} = ${fmt(perHour, 3)} → ${Math.floor(perHour + 1e-9)} db/óra (logikai kerekítéssel lefelé; matematikai kerekítés is elfogadott)`),
     p(`Veszteségidő: ${P.ops.length} művelet × ${cyc} perc − ${sum} perc = ${P.ops.length * cyc - sum} perc ciklusonként (minden dolgozó a leglassabb művelet ütemére vár).`),
     note('Késztermékről van szó, ezért a logikai (lefelé) kerekítés a védhetőbb, de a vizsgán mindkettő elfogadott.'),
+  ];
+
+  const maxIdx = P.ops.indexOf(cyc);
+  t.walkthrough = [
+    step('Ciklusidő: a leglassabb művelet',
+      p('Szalagszerű gyártásnál minden dolgozó a saját műveletét végzi, és a termék továbbhalad. A szalag csak olyan gyorsan haladhat, mint a leglassabb művelet – ez a szűk keresztmetszet, ennek ideje a ciklusidő (ütemidő).'),
+      f(`műveleti idők: ${P.ops.map((o, i) => `${LETTERS[i]}=${o}`).join(', ')} perc\nciklusidő = max = ${cyc} perc (${LETTERS[maxIdx]} feladat)`)),
+    step('Maximális kibocsátás egy műszak alatt',
+      p('Minden ciklusidő végén elkészül egy termék.'),
+      f(`műszak = ${fmt(P.hours)} × 60 = ${fmt(mins)} perc\nkibocsátás = ${fmt(mins)} ÷ ${cyc} = ${fmt(out, 2)} → ${Math.floor(out + 1e-9)} db`),
+      tip('Késztermékből csak egész darab készülhet el, ezért lefelé kerekítünk (a vizsgán a matematikai kerekítés is elfogadott).')),
+    step('Szükséges létszám',
+      p('Egy termékhez összesen ennyi munkaidő kell (átfutási idő):'),
+      f(`összes műveleti idő = ${P.ops.join(' + ')} = ${sum} perc\nlétszám = ${sum} ÷ ${cyc} = ${fmt(workers, 2)} → ${Math.ceil(workers - 1e-9)} fő`),
+      tip('A létszámot mindig FELFELÉ kerekítjük – fél ember nincs, és kevesebb dolgozóval nem érnénk el a maximális kibocsátást.')),
+    step('Kibocsátás, ha egy ember végez mindent',
+      p('Ekkor egy termék a teljes műveleti időösszegig tart, utána kezdheti a következőt.'),
+      f(`60 ÷ ${sum} = ${fmt(perHour, 3)} → ${Math.floor(perHour + 1e-9)} db/óra (matematikai kerekítéssel ${Math.round(perHour)})`)),
+    step('Kiegészítés: veszteségidő',
+      p('Ha minden műveletet más dolgozó végez, a gyorsabbak a ciklus végéig várnak. Ciklusonként ennyi idő vész el:'),
+      f(`veszteségidő = műveletek száma × ciklusidő − összes műveleti idő\n            = ${P.ops.length} × ${cyc} − ${sum} = ${P.ops.length * cyc - sum} perc`),
+      p('Ez a veszteség úgy csökkenthető, ha a műveleteket kiegyenlítjük (a leghosszabbat megosztjuk vagy kettőzzük).')),
   ];
   return t;
 }

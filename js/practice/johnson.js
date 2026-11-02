@@ -1,5 +1,5 @@
 // 5. feladattípus – Gyártási megrendelések ütemezése Johnson-szabállyal, 3 pont
-import { makeTask, addForm, p, table, note } from './common.js';
+import { makeTask, addForm, p, table, note , step, f, tip } from './common.js';
 import { fmt } from '../util.js';
 
 export const meta = { kind: 'johnson', title: 'Ütemezés Johnson-szabály alapján', points: 3, exam: true, order: 5 };
@@ -86,6 +86,29 @@ function build(P) {
     p(`Sorrend: ${seq.join(' → ')}`),
     table(['Termék', `${P.m1} (kezd–vég)`, `${P.m2} (kezd–vég)`], ms.rows),
     note(`Teljes átfutási idő: ${fmt(ms.total)} perc.`),
+  ];
+
+  const front = []; const back = []; const done = new Set();
+  const jl = steps.map((s) => {
+    const left = P.jobs.filter((j) => !done.has(j[0]));
+    const minTxt = left.map((j) => `${j[0]}: ${j[1]} / ${j[2]}`).join(', ');
+    done.add(s.j.name);
+    if (s.m === 1) front.push(s.j.name); else back.unshift(s.j.name);
+    const slots = [...front, ...Array(P.jobs.length - front.length - back.length).fill('_'), ...back];
+    return f(`Maradék (1. gép / 2. gép): ${minTxt}\n→ legkisebb: ${s.v} perc (${s.j.name}, ${s.m}. gép) → ${s.m === 1 ? 'ELŐRE, az első szabad helyre' : 'HÁTRA, az utolsó szabad helyre'}\n   sorrend: ${slots.join(' – ')}`);
+  });
+  t.walkthrough = [
+    step('A Johnson-szabály két gépre',
+      p('Ha minden terméknek ugyanabban a sorrendben kell átmennie két gépen, a Johnson-szabály megadja azt a sorrendet, amelynél a legrövidebb a teljes átfutási idő.'),
+      f('1. Keresd meg az ÖSSZES még be nem sorolt idő közül a legkisebbet.\n2. Ha az az 1. gépen van → a termék a sor ELEJÉRE (első szabad hely).\n   Ha a 2. gépen van → a sor VÉGÉRE (utolsó szabad hely).\n3. Húzd ki a terméket, és ismételd, amíg mind be nem került.'),
+      p('Miért? Az elején a rövid első műveletű termékek gyorsan „etetik” a második gépet, a végén pedig a rövid második műveletű termékek miatt nem kell sokat várni a befejezésre.'),
+      tip('Egyenlő legkisebb időknél az első gépen lévőt vesszük előbb (a javítókulcsok is így járnak el).')),
+    step('A besorolás lépésről lépésre', jl),
+    step('Eredmény és ellenőrzés Gantt-táblázattal',
+      p(`Sorrend: ${seq.join(' → ')}`),
+      p('A második gép egy terméket csak akkor kezdhet, ha az első gép már végzett vele ÉS a második gép is szabad: kezdés = max(1. gép vége, 2. gép előző vége).'),
+      table(['Termék', `${P.m1} (kezd–vég)`, `${P.m2} (kezd–vég)`], ms.rows),
+      f(`Teljes átfutási idő: ${ms.total} perc`)),
   ];
   return t;
 }

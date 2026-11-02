@@ -1,5 +1,5 @@
 // Kiegészítő típus – ABC-analízis készletérték szerint (vizsgafeladatsorokból)
-import { makeTask, addForm, p, table, note } from './common.js';
+import { makeTask, addForm, p, table, note , step, f, tip } from './common.js';
 import { fmt, roundTo } from '../util.js';
 
 export const meta = { kind: 'abc', title: 'ABC-analízis: megoszlások és kumulált százalékok', points: 9, exam: false, order: 11 };
@@ -47,6 +47,13 @@ function build(P) {
   t.solution = [
     table(['Csoport', 'Érték (Ft)', 'Megoszlás %', 'Kumulált %', 'Tétel (db)', 'Tétel %', 'Kumulált tétel %'], G.map((x) => [x.g, fmt(x.sum), fmt(x.pv, 2), fmt(x.cv, 2), x.cnt, fmt(x.pn, 2), fmt(x.cn, 2)])),
     note('Jellemző eredmény: kevés „A” tétel adja a készletérték nagy részét (Pareto-elv). A vizsgán ezután a Pareto-diagramot is meg kell rajzolni a két kumulált sor alapján.'),
+  ];
+
+  t.walkthrough = [
+    step('Csoportonkénti összegzés', ...G.map((x) => f(`${x.g}: ${P.items.filter((it) => it.g === x.g).map((it) => fmt(it.v)).join(' + ')} = ${fmt(x.sum)} Ft, ${x.cnt} tétel`)), f(`összesen: ${fmt(total)} Ft, ${P.items.length} tétel`)),
+    step('Megoszlás érték szerint és kumulálva', f(G.map((x) => `${x.g}: ${fmt(x.sum)} ÷ ${fmt(total)} × 100 = ${fmt(x.pv, 2)}%  → kumulált ${fmt(x.cv, 2)}%`).join('\n')), tip('A kumulált százalék a megoszlások halmozott összege; a C-nél 100%-ra jön ki.')),
+    step('Megoszlás tételszám szerint és kumulálva', f(G.map((x) => `${x.g}: ${x.cnt} ÷ ${P.items.length} × 100 = ${fmt(x.pn, 2)}%  → kumulált ${fmt(x.cn, 2)}%`).join('\n'))),
+    step('Értelmezés', p(`Az „A” csoport a tételek ${fmt(G[0].pn, 2)}%-a, de a készletérték ${fmt(G[0].pv, 2)}%-a – ezekre kell a legnagyobb figyelmet fordítani (Pareto-elv). A Pareto-diagram vízszintes tengelyén a tételek, függőlegesen az érték kumulált %-a szerepel.`)),
   ];
   return t;
 }

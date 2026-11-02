@@ -1,5 +1,5 @@
 // 3. feladattípus – Gazdaságos rendelési tételnagyság (EOQ / Wilson-modell), 6 pont
-import { makeTask, addForm, p, note } from './common.js';
+import { makeTask, addForm, p, note, step, f, tip } from './common.js';
 import { fmt } from '../util.js';
 
 export const meta = { kind: 'eoq', title: 'Gazdaságos rendelési tételnagyság, költségek, rendelési készletszint', points: 6, exam: true, order: 3 };
@@ -59,6 +59,26 @@ function build(P) {
     p(`Rendelések száma: ${fmt(P.D)} ÷ ${fmt(Q)} = ${fmt(nOrders, 2)} /év → éves rendelési költség ${fmt(Math.round(nOrders * P.S))} Ft → havi ${fmt(Math.round(ordM))} Ft`),
     p(`Átlagkészlet ${fmt(Q)} ÷ 2 = ${fmt(Q / 2)} db → éves tartási költség ${fmt(Math.round(Q / 2 * H))} Ft → havi ${fmt(Math.round(holdM))} Ft`),
     note('Ellenőrzés: az optimumban a rendelési és a készlettartási költség megegyezik.'),
+  ];
+
+  t.walkthrough = [
+    step('Az adatok kigyűjtése',
+      f(`D (éves felhasználás) = ${fmt(P.D)} db\nS (egy rendelés költsége) = ${fmt(P.S)} Ft\nár = ${fmt(P.price)} Ft/db, tartási ráta = ${P.h}%\nH (1 db egy évi tartási költsége) = ${fmt(P.price)} × ${P.h / 100} = ${fmt(H)} Ft/db/év`),
+      tip('A tartási költséget mindig darabra és évre kell átszámolni (Ft/db/év). Ha havi értéket adnak meg, szorozd 12-vel.')),
+    step('Optimális rendelési tételnagyság (Wilson-képlet)',
+      p('Az EOQ az a rendelési mennyiség, amelynél a rendelési és a tartási költség összege a legkisebb.'),
+      f(`Q* = √(2 × D × S ÷ H)\n   = √(2 × ${fmt(P.D)} × ${fmt(P.S)} ÷ ${fmt(H)})\n   = √(${fmt(2 * P.D * P.S)} ÷ ${fmt(H)})\n   = √${fmt(Math.round(2 * P.D * P.S / H * 100) / 100)}\n   = ${fmt(Qexact, 2)} ≈ ${fmt(Q)} db`)),
+    step('Rendelési (jelző) készletszint',
+      p('Akkor kell rendelni, amikor a készlet annyira csökken, hogy a rendelés beérkezéséig (átfutási idő) még kitartson, és a biztonsági készlet megmaradjon.'),
+      f(`napi felhasználás = ${fmt(P.D)} ÷ 360 = ${fmt(daily, 2)} ≈ ${fmt(Math.round(daily))} db/nap\nrendelési szint = napi felhasználás × átfutási idő + biztonsági készlet\n               = ${fmt(Math.round(daily))} × ${P.L} + ${fmt(P.SS)} = ${fmt(rop)} db`),
+      tip(`A tanár a napi felhasználást előbb egészre kerekíti. Kerekítés nélkül ${fmt(ropExact, 2)} ≈ ${fmt(Math.round(ropExact))} db jönne ki – mindkettő elfogadott.`)),
+    step('Havi rendelési (előkészítési) költség',
+      f(`rendelések száma évente = D ÷ Q = ${fmt(P.D)} ÷ ${fmt(Q)} = ${fmt(nOrders, 2)}\néves rendelési költség = ${fmt(nOrders, 2)} × ${fmt(P.S)} = ${fmt(nOrders * P.S, 2)} Ft\nhavi = ÷ 12 = ${fmt(ordM, 2)} ≈ ${fmt(Math.round(ordM))} Ft`)),
+    step('Havi készlettartási költség',
+      p('Átlagosan fél tételnyi készlet van raktáron (a biztonsági készlettől most eltekintünk).'),
+      f(`átlagkészlet = Q ÷ 2 = ${fmt(Q)} ÷ 2 = ${fmt(Q / 2)} db\néves tartási költség = ${fmt(Q / 2)} × ${fmt(H)} = ${fmt(Q / 2 * H, 2)} Ft\nhavi = ÷ 12 = ${fmt(holdM, 2)} ≈ ${fmt(Math.round(holdM))} Ft`)),
+    step('Ellenőrzés', p('Az optimumban a rendelési és a tartási költség (közel) egyenlő. Ha nagyon eltér, valahol hibáztál – leggyakrabban a H kiszámításánál vagy a ÷ 12 elhagyásánál.'),
+      f(`${fmt(Math.round(ordM))} Ft ≈ ${fmt(Math.round(holdM))} Ft ✓`)),
   ];
   return t;
 }

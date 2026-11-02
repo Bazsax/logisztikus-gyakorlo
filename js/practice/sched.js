@@ -1,5 +1,5 @@
 // Kiegészítő típus – Rendelésütemezés prioritási szabállyal, késésszámítás (vizsgafeladatsorokból)
-import { makeTask, addForm, p, table, note } from './common.js';
+import { makeTask, addForm, p, table, note , step, f, tip } from './common.js';
 import { fmt, roundTo } from '../util.js';
 
 export const meta = { kind: 'sched', title: 'Rendelésütemezés: sorrend, késés, tartalékidő', points: 10, exam: false, order: 10 };
@@ -82,6 +82,17 @@ function build(P) {
     p(`Átlagos késés: ${totLate} ÷ ${n} = ${fmt(avgAll, 2)} óra; késve végzettekre: ${totLate} ÷ ${nLate} = ${fmt(avgLate, 2)} óra.`),
     p(`Késések aránya: ${nLate} ÷ ${n} = ${fmt(pLate, 1)}%; határidőre végzett: ${fmt(100 - pLate, 1)}%.`),
     note('A vizsgák a kerekítést a feladatban adják meg (egész szám vagy egy tizedes) – itt mindkettő elfogadott.'),
+  ];
+
+  t.walkthrough = [
+    step('A sorrend meghatározása', p(`Szabály: „${R.name}” – ${R.desc}.`), f(rows.map((x, k) => `${k + 1}. ${x.name} (munkaidő ${x.t}, határidő ${x.d})`).join('\n'))),
+    step('Az ütemezési táblázat soronként',
+      p('Az első munka 0-kor kezdődik, minden további ott kezdődik, ahol az előző véget ért.'),
+      f('befejezés = kezdés + munkaidő\nátadás = max(befejezés, határidő)\nkésés = befejezés − határidő, ha pozitív; különben 0 (és ami marad, az tartalékidő)'),
+      f(rows.map((x) => `${x.name}: ${x.start} + ${x.t} = ${x.end}; határidő ${x.d} → ${x.late ? `késés ${x.end} − ${x.d} = ${x.late}` : `időben (tartalék ${x.slack})`}`).join('\n'))),
+    step('Mutatók',
+      f(`összes késés = ${rows.map((x) => x.late).join(' + ')} = ${totLate} óra\nösszes tartalékidő = ${rows.map((x) => x.slack).join(' + ')} = ${totSlack} óra\nátlagos késés (minden munkára) = ${totLate} ÷ ${n} = ${fmt(avgAll, 2)}\nátlagos késés (csak a késve végzettekre) = ${totLate} ÷ ${nLate} = ${fmt(avgLate, 2)}\nkésések aránya = ${nLate} ÷ ${n} × 100 = ${fmt(pLate, 1)}%\nhatáridőre végzett = ${fmt(100 - pLate, 1)}%`),
+      tip('Két különböző átlagos késést kérdeznek: az egyiknél az ÖSSZES megrendeléssel, a másiknál csak a KÉSVE végzettek számával osztunk.')),
   ];
   return t;
 }

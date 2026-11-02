@@ -1,5 +1,5 @@
 // Kiegészítő típus – Készletértékelés FIFO, LIFO és súlyozott átlagár szerint (nem része a mintavizsgának)
-import { makeTask, addForm, p, table, note } from './common.js';
+import { makeTask, addForm, p, table, note , step, f, tip } from './common.js';
 import { fmt, roundTo } from '../util.js';
 
 export const meta = { kind: 'valuation', title: 'Készletértékelés: FIFO, LIFO, súlyozott átlagár', points: 3, exam: false, order: 9 };
@@ -47,6 +47,14 @@ function build(P) {
     p(`LIFO: ${lifo.parts.join(' + ')} = ${fmt(lifo.value)} Ft`),
     p(`Átlagár: ${fmt(totV)} ÷ ${fmt(totQ)} = ${fmt(avgP, 2)} Ft/db → ${fmt(avgP, 2)} × ${fmt(P.use)} = ${fmt(avgV)} Ft`),
     note('Emelkedő áraknál a LIFO adja a legmagasabb felhasználási értéket (és a legalacsonyabb zárókészletet).'),
+  ];
+
+  t.walkthrough = [
+    step('A három módszer lényege', p('A felhasznált mennyiség ugyanaz, csak az a kérdés, MELYIK beszerzési áron számoljuk el.'),
+      f('FIFO: először a legrégebbi tételből fogyasztunk\nLIFO: először a legutolsó (legfrissebb) tételből\nSúlyozott átlagár: összes beszerzési érték ÷ összes mennyiség')),
+    step('FIFO – rétegenként a legrégebbitől', f(`${fifo.parts.join(' + ')} = ${fmt(fifo.value)} Ft`), tip('Ha egy tétel elfogy, a következő (újabb) tételből veszed a maradékot.')),
+    step('LIFO – rétegenként a legújabbtól', f(`${lifo.parts.join(' + ')} = ${fmt(lifo.value)} Ft`)),
+    step('Súlyozott átlagár', f(`összes mennyiség: ${P.lots.map((l) => l.q).join(' + ')} = ${fmt(totQ)} db\nösszes érték: ${P.lots.map((l) => `${l.q}×${l.price}`).join(' + ')} = ${fmt(totV)} Ft\nátlagár = ${fmt(totV)} ÷ ${fmt(totQ)} = ${fmt(avgP, 2)} Ft/db\nfelhasználás = ${fmt(avgP, 2)} × ${fmt(P.use)} = ${fmt(avgV)} Ft`)),
   ];
   return t;
 }

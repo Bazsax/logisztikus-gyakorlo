@@ -3,7 +3,7 @@ import { h, clear, copyText, download, toast, modal, fmt } from './util.js';
 import { settings, saveSettings, stats, saveStats, recordQuestion, recordSession, resetStats, loadSession, saveSession, clearSession, exportAll, importAll, applyTheme, DEFAULT_SETTINGS } from './store.js';
 import { loadBank, BANK, BANK_BY_ID, TOPICS, createSession, questionOf, practiceOf, itemScore, sumScores, grade, sectionOf } from './session.js';
 import { renderTheory, hints as theoryHints, solutionText, aiAnswerText, isAnswered, TYPE_LABEL, maxPoints } from './theory.js';
-import { renderPractice, renderBlocks, practiceSolutionText } from './practiceView.js';
+import { renderPractice, renderBlocks, renderWalkthrough } from './practiceView.js';
 import { GENERATORS } from './practice/index.js';
 import { helpPrompt, solvePrompt, essayPrompt, importAi, aiAgreement } from './ai.js';
 
@@ -36,6 +36,7 @@ const I = {
   copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',
   spark: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17l.7 1.8 1.8.7-1.8.7L19 22l-.7-1.8-1.8-.7 1.8-.7z"/>',
   upload: '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+  steps: '<path d="M4 6h4v4H4zM10 8h10M4 14h4v4H4zM10 16h10"/>',
   logo: '<path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/>',
 };
 
@@ -293,6 +294,7 @@ function card(i) {
       isT ? h('div', null, q.explanation || 'Ehhez a kérdéshez nincs külön magyarázat.', q.type !== 'essay' ? h('div', { class: 'small', style: { marginTop: '6px', whiteSpace: 'pre-line' } }, h('strong', null, 'Helyes válasz: '), solutionText(q)) : null)
         : h('div', { class: 'statement' }, renderBlocks(q.solution))));
   }
+  if (!isT && S.walk?.[i]) el.appendChild(renderWalkthrough(q));
   if (S.ai[i] !== undefined) {
     const ag = aiAgreement(S, i);
     el.appendChild(h('div', { class: 'panel ai' },
@@ -307,6 +309,7 @@ function card(i) {
     h('button', { class: 'btn sm' + (S.checked[i] ? ' on' : ''), onclick: () => { S.checked[i] = !S.checked[i]; if (isT && q.type === 'essay' && S.checked[i]) S.revealed[i] = true; persist(); refresh(); } }, svg(I.check, 16), S.checked[i] ? 'Ellenőrzés ki' : 'Ellenőrzés'),
     h('button', { class: 'btn sm' + (S.revealed[i] ? ' on' : ''), onclick: () => { S.revealed[i] = !S.revealed[i]; persist(); refresh(); } }, svg(I.eye, 16), 'Megoldás'),
     h('button', { class: 'btn sm' + (S.expl[i] ? ' on' : ''), onclick: () => { S.expl[i] = !S.expl[i]; persist(); refresh(); } }, svg(I.info, 16), 'Magyarázat'),
+    !isT ? h('button', { class: 'btn sm' + (S.walk?.[i] ? ' on' : ''), title: 'Részletes levezetés lépésről lépésre', onclick: () => { S.walk = { ...(S.walk || {}), [i]: !S.walk?.[i] }; persist(); refresh(); } }, svg(I.steps, 16), 'Levezetés') : null,
     h('button', { class: 'btn sm ghost', title: 'Feladat kitöltése a megoldással', onclick: () => { fillItem(i); persist(); refresh(); } }, 'Kitöltés'),
     h('span', { class: 'spacer' }),
     h('button', { class: 'btn sm ghost', title: 'Magyarázatot kérő prompt másolása', onclick: () => copyText(helpPrompt(S, [i])) }, svg(I.copy, 16), 'AI segítség'),

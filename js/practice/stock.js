@@ -1,5 +1,5 @@
 // Kiegészítő típus – Készletszintek és összköltség EOQ mellett (vizsgafeladatsorokból)
-import { makeTask, addForm, p, note } from './common.js';
+import { makeTask, addForm, p, note , step, f, tip } from './common.js';
 import { fmt } from '../util.js';
 
 export const meta = { kind: 'stock', title: 'Készletszintek, rendelésszám és összköltség (EOQ)', points: 10, exam: false, order: 13 };
@@ -53,6 +53,14 @@ function build(P) {
     p(`Ku = ${fmt(P.S)} × ${fmt(P.D)} ÷ ${fmt(Q)} = ${fmt(Ku)} Ft; Kt = ${fmt(P.Ky)} × ${fmt(Q)} ÷ 2 = ${fmt(Kt)} Ft`),
     p(`TC = ${fmt(P.D)} × ${fmt(P.price)} + ${fmt(Ku)} + ${fmt(Kt)} = ${fmt(TC)} Ft`),
     note('Az optimumban a rendelési és a tartási költség egyenlő (kerekítés miatt kis eltérés lehet).'),
+  ];
+
+  t.walkthrough = [
+    step('Tartási költség éves, darabra', f(P.monthly ? `K = ${fmt(P.Km)} Ft/db/hónap × 12 = ${fmt(P.Ky)} Ft/db/év` : `K = ${fmt(P.Ky)} Ft/db/év (adott)`)),
+    step('EOQ', f(`Q = √(2 × S × R ÷ K) = √(2 × ${fmt(P.S)} × ${fmt(P.D)} ÷ ${fmt(P.Ky)}) = ${fmt(Qx, 2)} ≈ ${fmt(Q)} db`)),
+    step('Napi felhasználás, folyókészlet, jelzőkészlet', f(`napi = ${fmt(P.D)} ÷ ${P.n} = ${fmt(daily, 2)} ≈ ${fmt(Math.round(daily))} db\nfolyókészlet (átfutás alatti fogyás) = ${fmt(Math.round(daily))} × ${P.L} = ${fmt(FK)} db\njelzőkészlet = biztonsági + folyó = ${fmt(P.SS)} + ${fmt(FK)} = ${fmt(JK)} db`)),
+    step('Rendelések száma és gyakorisága', f(`R ÷ Q = ${fmt(P.D)} ÷ ${fmt(Q)} = ${fmt(nOrd, 2)} → ${nOrdC} rendelés (felfelé)\ngyakoriság = ${P.n} ÷ ${nOrdC} = ${fmt(P.n / nOrdC, 2)} → ${freq} naponta (lefelé, hogy ne fogyjunk ki)`)),
+    step('Költségek', f(`Ku = S × R ÷ Q = ${fmt(P.S)} × ${fmt(P.D)} ÷ ${fmt(Q)} = ${fmt(Ku)} Ft\nKt = K × Q ÷ 2 = ${fmt(P.Ky)} × ${fmt(Q)} ÷ 2 = ${fmt(Kt)} Ft\nTC = R × C + Ku + Kt = ${fmt(P.D)} × ${fmt(P.price)} + ${fmt(Ku)} + ${fmt(Kt)} = ${fmt(TC)} Ft`), tip('A TC-be a beszerzési érték (R × C) is beletartozik – ez a legnagyobb tétel!')),
   ];
   return t;
 }

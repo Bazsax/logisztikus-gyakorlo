@@ -1,5 +1,5 @@
 // Kiegészítő típus – Minőségügyi mutatók: hibaráta, átlagos minőségi kategória és együttható (tanfolyami feladatsorokból)
-import { makeTask, addForm, p, table, note } from './common.js';
+import { makeTask, addForm, p, table, note , step, f, tip } from './common.js';
 import { fmt, roundTo } from '../util.js';
 
 export const meta = { kind: 'quality', title: 'Minőségügyi mutatók: hibaráta, minőségi kategória és együttható', points: 6, exam: false, order: 15 };
@@ -53,6 +53,14 @@ function build(P) {
     p(`Átlagos minőségi kategória: (${fmt(P.q[0])}×1 + ${fmt(P.q[1])}×2 + ${fmt(P.q[2])}×3) ÷ ${fmt(Q)} = ${fmt(cat, 3)}`),
     p(`Átlagos minőségi együttható: (${fmt(P.q[0])}×${fmt(P.price[0])} + ${fmt(P.q[1])}×${fmt(P.price[1])} + ${fmt(P.q[2])}×${fmt(P.price[2])}) ÷ (${fmt(Q)}×${fmt(P.price[0])}) = ${fmt(coef, 3)}`),
     note('A minőségi kategória „felülről”, az együttható „alulról” közelít 1-hez, ha javul a minőség.'),
+  ];
+
+  t.walkthrough = [
+    step('Hibaráta', f(`összes hiba = ${P.counts.join(' + ')} = ${tot} db\nhibaráta = ${tot} ÷ ${fmt(P.shipped)} × 100 = ${fmt(rate, 2)}%`)),
+    step('A két leggyakoribb hiba', f(`${DEFECTS[top[0][1]]} (${top[0][0]}) + ${DEFECTS[top[1][1]]} (${top[1][0]}) = ${top[0][0] + top[1][0]} db → ${fmt(topRate, 2)}%`)),
+    step('Átlagos minőségi kategória', p('Az osztály sorszámával súlyozott átlag. Ha minden 1. osztályú lenne, 1 jönne ki; minél nagyobb, annál rosszabb.'), f(`(${fmt(P.q[0])}×1 + ${fmt(P.q[1])}×2 + ${fmt(P.q[2])}×3) ÷ ${fmt(Q)} = ${fmt(cat, 3)}`)),
+    step('Átlagos minőségi együttható', p('A tényleges (osztályos árakon számolt) érték és az „ha minden 1. osztályú lenne” érték hányadosa. Minél közelebb van 1-hez, annál jobb.'),
+      f(`(${fmt(P.q[0])}×${fmt(P.price[0])} + ${fmt(P.q[1])}×${fmt(P.price[1])} + ${fmt(P.q[2])}×${fmt(P.price[2])}) ÷ (${fmt(Q)}×${fmt(P.price[0])}) = ${fmt(coef, 3)}`)),
   ];
   return t;
 }

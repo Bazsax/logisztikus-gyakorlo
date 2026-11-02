@@ -1,5 +1,5 @@
 // 6. feladattípus – Készletek forgási ideje és sebessége kronologikus átlaggal, 3 pont
-import { makeTask, addForm, p, table, note } from './common.js';
+import { makeTask, addForm, p, table, note , step, f, tip } from './common.js';
 import { fmt, roundTo } from '../util.js';
 
 export const meta = { kind: 'turnover', title: 'Forgási idő és sebesség kronologikus átlaggal', points: 3, exam: true, order: 6 };
@@ -51,6 +51,20 @@ function build(P) {
     p(`Forgási sebesség = ${fmt(P.sales)} ÷ ${fmt(roundTo(avg, 2))} = ${fmt(roundTo(speed, 2))} fordulat/év`),
     p(`Forgási idő = ${P.days} ÷ ${fmt(roundTo(speed, 2))} = ${fmt(roundTo(time, 2))} nap`),
     note('Kronologikus átlagnál az első és az utolsó adat fele súllyal szerepel, az osztó n − 1.'),
+  ];
+
+  t.walkthrough = [
+    step('Miért kronologikus átlag?',
+      p('A készletet időpontokban mérték (negyedévenként). Az első és az utolsó adat az időszak szélein van, ezért csak FELE súllyal számít; a közbülső adatok teljes súllyal. Az osztó az adatok száma mínusz egy (itt 5 − 1 = 4 negyedév).'),
+      f('átlagkészlet = (x1/2 + x2 + x3 + x4 + x5/2) ÷ (n − 1)')),
+    step('Az átlagkészlet kiszámítása',
+      f(`= (${fmt(a)}/2 + ${fmt(b)} + ${fmt(c)} + ${fmt(d)} + ${fmt(e)}/2) ÷ 4\n= (${fmt(a / 2)} + ${fmt(b)} + ${fmt(c)} + ${fmt(d)} + ${fmt(e / 2)}) ÷ 4\n= ${fmt(sum)} ÷ 4 = ${fmt(roundTo(avg, 2))} millió Ft`)),
+    step('Forgási sebesség (hányszor fordul meg a készlet egy év alatt)',
+      f(`forgási sebesség = értékesítés ÷ átlagkészlet = ${fmt(P.sales)} ÷ ${fmt(roundTo(avg, 2))} = ${fmt(roundTo(speed, 2))} fordulat/év`)),
+    step('Forgási idő (hány nap alatt fordul meg egyszer)',
+      f(`forgási idő = napok ÷ forgási sebesség = ${P.days} ÷ ${fmt(roundTo(speed, 2))} = ${fmt(roundTo(time, 2))} nap\n(másképp: átlagkészlet × napok ÷ értékesítés = ${fmt(roundTo(avg, 2))} × ${P.days} ÷ ${fmt(P.sales)})`),
+      p('Értelmezés: minél nagyobb a forgási sebesség és minél kisebb a forgási idő, annál kevesebb pénz van a készletben lekötve.'),
+      tip('Ha a feladat egészre kerekítést kér, az egészre kerekített értékekkel is helyes – az app mindkettőt elfogadja.')),
   ];
   return t;
 }

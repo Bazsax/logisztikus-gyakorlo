@@ -11,6 +11,7 @@ Gyakorló webalkalmazás a **logisztikus (programkövetelmény: 10415006) állam
   - „A mintavizsga (Gamer szék) adatai” opció a tanfolyami mintafeladatot adja vissza, a hivatalos pontozás szerint.
 - **Vegyes** mód és **vizsgaszimuláció** (írásbeli 60 perc / 30%, projektfeladat 120 perc / 70%, részenként min. 50%, érdemjegy).
 - **Tipp** (3 fokozat), **Megoldás**, **Magyarázat**, **Kitöltés** – feladatonként és egyszerre az összesre.
+- **Levezetés** a számolásos feladatoknál: lenyitható lépésekben, képletekkel, a saját számaiddal és tipikus hibákra figyelmeztetéssel.
 - **AI-gombok**: segítő prompt másolása; megoldó prompt, amelyre az AI betölthető JSON-fájlt ad vissza (összevethető a beépített megoldással); kifejtős válaszok AI-értékelése visszatölthető pontszámmal.
 - Statisztika, hibás kérdések újragyakorlása, világos/sötét téma, mobilbarát felület, offline működés (PWA), mentés/visszatöltés fájlba.
 

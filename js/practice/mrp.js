@@ -1,7 +1,7 @@
 // 4. feladattípus – Anyagszükséglet-tervezés (MRP), 6 pont
 // Két változat: egyszintű (késztermék + 3 alkatrész) és többszintű (részegység + közös alkatrész),
 // ahogy a vizsgafeladatsorokban (pl. franciaágy, kerékpárlámpa) szerepel.
-import { makeTask, addGrid, ceilTo, p, ul, table, note } from './common.js';
+import { makeTask, addGrid, ceilTo, p, ul, table, note, step, f, tip } from './common.js';
 import { fmt } from '../util.js';
 
 export const meta = { kind: 'mrp', title: 'Anyagszükséglet-tervezés (MRP)', points: 6, exam: true, order: 4 };
@@ -165,6 +165,35 @@ function build(P) {
     ...(P.multi ? [explain(P.sub.name, subRec, P.sub)] : []),
     ...P.comps.map((c, i) => explain(c.name, recs[i], c)),
     note('A Gamer székes javítókulcs szerint a nyitókészlet-sorban a szükségleti heteket és az azt követő hetet (záró készlet) kell kitölteni. A késztermék és az egyszerű alkatrészek bruttó szükséglete nem pontozott (---), a többi hét nyitókészlete sem – ha helyesen beírod, az nem hiba.'),
+  ];
+
+  const weekLines = (rec, item) => Object.keys(rec.gross).map((w) => {
+    const W = Number(w); const net = rec.net[W]; const rc = rec.rec[W] || 0;
+    return f(`${W}. hét: bruttó ${fmt(rec.gross[W])}, nyitó ${fmt(rec.open[W])} → nettó = ${fmt(rec.gross[W])} − ${fmt(rec.open[W])} = ${fmt(net)}`
+      + (net > 0 ? `\n   beérkezés = ${item.pack > 1 ? `${item.pack} többszörösére felfelé: ${fmt(rc)} (${rc / item.pack} csomag)` : `${fmt(rc)} (nincs csomagolási egység)`}; rendelés a ${W - item.lead}. héten` : '\n   nincs szükség rendelésre')
+      + `\n   záró (következő heti nyitó) = ${fmt(rec.open[W])} + ${fmt(rc)} − ${fmt(rec.gross[W])} = ${fmt(rec.open[W] + rc - rec.gross[W])}`);
+  });
+  const gLines = (rec, srcs) => Object.keys(rec.gross).map((w) => f(`${w}. hét: ${srcs.map(([name, orders, q]) => (orders[w] ? `${name} rendelése ${fmt(orders[w])} × ${q}` : null)).filter(Boolean).join(' + ')} = ${fmt(rec.gross[w])}`));
+  t.walkthrough = [
+    step('Az MRP lényege és a darabjegyzék',
+      p('Az MRP (anyagszükséglet-tervezés) a késztermék gyártási tervéből visszafelé számolja ki, hogy az egyes alkatrészekből mikor és mennyit kell rendelni. A kulcs: az alkatrész szükséglete a SZÜLŐTÉTEL TERVEZETT RENDELÉSÉBŐL jön (amikor a szülőt elkezdik gyártani, akkor kell hozzá az alkatrész).'),
+      ul(P.multi
+        ? [`${P.product.name} ← 1 ${P.sub.name.toLowerCase()} + ${P.comps[0].qty} ${P.comps[0].name.toLowerCase()} + ${P.comps[1].qty} ${P.comps[1].name.toLowerCase()}`, `${P.sub.name} ← ${P.comps[1].qtySub} ${P.comps[1].name.toLowerCase()}`]
+        : [`${P.product.name} ← ${P.comps.map((c) => `${c.qty} ${c.name.toLowerCase()}`).join(' + ')}`]),
+      f('nettó = bruttó − nyitó\nbeérkezés = a nettó a csomagolási egység többszörösére FELFELÉ kerekítve\nrendelés hete = beérkezés hete − átfutási idő\nkövetkező nyitó = nyitó + beérkezés − bruttó')),
+    step(`${P.product.name} (késztermék)`, p(`A bruttó szükséglet a vezérprogram: ${Object.entries(P.demand).map(([w, v]) => `${w}. hét: ${fmt(v)} db`).join(', ')}. Kezdő készlet: ${fmt(P.product.stock)} db, átfutás ${P.product.lead} hét.`), weekLines(prodRec, P.product)),
+    ...(P.multi ? [step(`${P.sub.name} (részegység, 1 db/termék)`, p('Bruttó szükséglet = a késztermék tervezett rendelése × 1.'), gLines(subRec, [[P.product.name, prodRec.order, 1]]), weekLines(subRec, P.sub))] : []),
+    ...P.comps.map((c, i) => step(`${c.name}${P.multi && i === 1 ? ' (közös alkatrész – két helyről kap igényt!)' : ''}`,
+      p(P.multi && i === 1 ? `Bruttó szükséglet = késztermék rendelése × ${c.qty} + ${P.sub.name.toLowerCase()} rendelése × ${c.qtySub}. A két forrás eltérő hetekre eshet!` : `Bruttó szükséglet = a késztermék tervezett rendelése × ${c.qty}.`),
+      gLines(recs[i], P.multi && i === 1 ? [[P.product.name, prodRec.order, c.qty], [P.sub.name, subRec.order, c.qtySub]] : [[P.product.name, prodRec.order, c.qty]]),
+      p(`Kezdő készlet: ${fmt(c.stock)} db, átfutás ${c.lead} hét, csomag ${fmt(c.pack)} db.`),
+      weekLines(recs[i], c))),
+    step('Tipikus hibák', ul([
+      'Az alkatrész bruttó szükségletét a vevői megrendelésből számolni – helyesen a szülőtétel TERVEZETT RENDELÉSÉBŐL kell.',
+      'Elfelejteni a kerekítést a csomagolási egység többszörösére, vagy lefelé kerekíteni.',
+      'Kétheti átfutásnál csak egy héttel korábbra tenni a rendelést.',
+      'A maradék (záró) készletet nem átvinni a következő szükségleti hét nyitókészletébe.',
+    ]), tip('A nyitókészlet-sorban a szükségleti heteket és az utána következő hetet (záró készlet) töltsd ki – a javítókulcs így pontoz.')),
   ];
   return t;
 }

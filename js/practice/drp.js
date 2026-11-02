@@ -1,5 +1,5 @@
 // 1. feladattípus – Elosztási szükséglettervezés (DRP), 6 pont
-import { makeTask, addGrid, ceilTo, p, ul, table, note } from './common.js';
+import { makeTask, addGrid, ceilTo, p, ul, table, note, step, f, tip } from './common.js';
 import { fmt } from '../util.js';
 
 const CITIES = ['Budapest', 'Győr', 'Debrecen', 'Szeged', 'Pécs', 'Miskolc', 'Székesfehérvár', 'Nyíregyháza', 'Kecskemét', 'Szombathely'];
@@ -127,6 +127,42 @@ function build(P) {
     ...dcRes.map((d) => p(`${d.dc.name}: 7. hét nettó ${d.dc.d7} − ${d.open7} = ${d.net7} → beérkezés ${d.rec7 || '–'}; 8. hét nyitó ${d.open8}, nettó ${d.dc.d8} − ${d.open8} = ${d.net8} → beérkezés ${d.rec8 || '–'}; 9. heti nyitó ${d.open9}. Rendelés ${d.dc.lead} héttel a beérkezés előtt.`)),
     ...fw.map((x) => p(`Késztermékraktár ${x.w}. hét: bruttó = ${dcRes.map((d) => d.orders[x.w] || 0).filter(Boolean).join(' + ') || '0'} + ${P.other} = ${x.gross}; nettó = ${x.gross} − ${x.open} = ${x.net} → ${P.unit} többszörösére kerekítve ${x.rec}; rendelés a ${x.w - 1}. héten.`)),
     note('A hivatalos javítókulcs a késztermékraktárnál csak azokat a heteket tölti ki, amikor az elosztóközpontok rendelnek (soronként 3 cella). Az egyéb értékesítést ezekre a hetekre számítjuk; a további hetek üresen maradnak. A minimális rendelési mennyiség csak az elosztóközpontok felé érvényes.'),
+  ];
+
+  const allowed = [0, 1, 2, 3, 4].map((k) => P.min + k * P.step);
+  const why = (net) => (net <= 0 ? 'nincs szükség rendelésre (a nyitókészlet fedezi a keresletet)' : net <= P.min ? `${net} ≤ ${P.min}, ezért a minimális mennyiséget, ${P.min} db-ot kell rendelni` : `${net} > ${P.min}, ezért a következő rendelhető mennyiség kell: ${lot(net, P.min, P.step)} db (${P.min} + ${(lot(net, P.min, P.step) - P.min) / P.step} × ${P.step})`);
+  t.walkthrough = [
+    step('Mit csinál a DRP, és mit jelentenek a sorok?',
+      p('A DRP (elosztási szükséglettervezés) azt tervezi meg, hogy az elosztóközpontok mikor és mennyit rendeljenek a központi (késztermék-) raktártól, hogy ne fogyjanak ki. Az elosztóközpontok rendelései adják a központi raktár keresletét.'),
+      ul(['Bruttó kereslet: amennyit az adott héten el akarnak adni (a feladatból).', 'Nyitókészlet: amennyi a hét elején raktáron van.', 'Nettó kereslet: amennyi hiányzik = bruttó − nyitókészlet (ha negatív lenne, 0).', 'Tervezett beérkezés: amennyit a hiány fedezésére meg kell kapni – a rendelési szabályok szerint kerekítve.', 'Tervezett rendelés: a beérkezés előtt annyi héttel, amennyi a szállítási idő.']),
+      f('nettó = bruttó − nyitó\nkövetkező heti nyitó = nyitó + beérkezés − bruttó')),
+    step('A rendelési szabály: mennyit lehet rendelni?',
+      p(`Az elosztóközpontok legalább ${P.min} db-ot rendelhetnek, és fölötte csak ${P.step} darabonként léphetnek. Tehát a rendelhető mennyiségek: ${allowed.join(', ')} … db.`),
+      p('Mindig a legkisebb olyan mennyiséget választjuk, amely legalább akkora, mint a nettó kereslet.'),
+      tip('Nem a nettó keresletet írjuk a beérkezéshez, hanem az erre kerekített rendelhető mennyiséget – a különbség a következő hétre marad készletként.')),
+    ...dcRes.map((d) => step(`${d.dc.name} elosztóközpont (szállítási idő: ${d.dc.lead} hét)`,
+      p(`7. hét: bruttó ${d.dc.d7}, nyitókészlet ${d.open7} (a feladatból).`),
+      f(`nettó = ${d.dc.d7} − ${d.open7} = ${d.net7}`),
+      p(`Beérkezés: ${why(d.net7)}.`),
+      f(`8. heti nyitó = ${d.open7} + ${d.rec7} − ${d.dc.d7} = ${d.open8}`),
+      p(`8. hét: bruttó ${d.dc.d8}, nyitó ${d.open8}.`),
+      f(`nettó = ${d.dc.d8} − ${d.open8} = ${d.net8}`),
+      p(`Beérkezés: ${why(d.net8)}.`),
+      f(`9. heti nyitó = ${d.open8} + ${d.rec8} − ${d.dc.d8} = ${d.open9}`),
+      p(`Rendelés: a beérkezéseket ${d.dc.lead} héttel korábban kell megrendelni → ${Object.entries(d.orders).map(([w, v]) => `${w}. hét: ${v} db`).join(', ') || 'nincs rendelés'}.`))),
+    step('A késztermékraktár bruttó kereslete',
+      p(`A késztermékraktárnak két „vevője” van: az elosztóközpontok (az ő TERVEZETT RENDELÉSEIK, nem a keresletük!) és az egyéni vásárlók (${P.other} db/hét).`),
+      ...fw.map((x) => f(`${x.w}. hét: ${dcRes.map((d) => d.orders[x.w] || 0).filter(Boolean).join(' + ')} + ${P.other} = ${x.gross} db`)),
+      tip('A hivatalos javítókulcs csak azokat a heteket tölti ki, amikor az elosztóközpontok rendelnek.')),
+    step(`A késztermékraktár terve (${P.unit} db-os egységrakomány, 1 hét átfutás)`,
+      p(`A gyár csak egész egységrakományt szállít, ezért a nettó keresletet ${P.unit} többszörösére kerekítjük FELFELÉ. Itt nincs minimális rendelési mennyiség.`),
+      ...fw.map((x) => f(`${x.w}. hét: nyitó ${x.open} → nettó ${x.gross} − ${x.open} = ${x.net} → beérkezés ${x.rec} (${x.rec / P.unit} × ${P.unit}) → záró ${x.open + x.rec - x.gross}; rendelés a ${x.w - 1}. héten`))),
+    step('Ellenőrzés és tipikus hibák', ul([
+      'A következő heti nyitókészlet soha nem lehet negatív – ha az lenne, elszámoltad a beérkezést.',
+      'A rendelés hete = beérkezés hete − szállítási idő. Kétheti szállításnál két oszloppal balra kerül!',
+      'A késztermékraktár bruttó keresletébe az elosztóközpontok RENDELÉSEI kerülnek, abba a hétbe, amikor rendelnek.',
+      'Az egyéni vásárlók heti igényét minden kitöltött héthez hozzá kell adni.',
+    ])),
   ];
   return t;
 }

@@ -1,5 +1,5 @@
 // Kiegészítő típus – Teljes eszközhatékonyság (OEE) (vizsgafeladatsorokból)
-import { makeTask, addForm, p, note } from './common.js';
+import { makeTask, addForm, p, note , step, f, tip } from './common.js';
 import { fmt, roundTo } from '../util.js';
 
 export const meta = { kind: 'oee', title: 'Teljes eszközhatékonyság (OEE)', points: 8, exam: false, order: 12 };
@@ -58,6 +58,14 @@ function build(P) {
     p(`Minőség: (${fmt(P.plan)} − ${fmt(P.scrap)}) ÷ ${fmt(P.plan)} = ${fmt(Q, 2)}`),
     p(`OEE = ${fmt(A, 2)} × ${fmt(Pf, 2)} × ${fmt(Q, 2)} = ${fmt(oee, 2)} (${fmt(Math.round(oee * 100))}%)`),
     note('A vizsgamegoldás a kerekített részeredményeket szorozza össze; a kerekítés nélküli szorzat is elfogadott.'),
+  ];
+
+  t.walkthrough = [
+    step('Az OEE felépítése', f('OEE = rendelkezésre állás × teljesítmény × minőség'), p('Mindhárom tényező azt méri, mennyi vész el az ideálishoz képest: az állásidő, a lassúbb működés és a selejt miatt.')),
+    step('Rendelkezésre állás', f(`teljes működési idő = ${P.days} nap × ${P.shifts} műszak × 8 óra = ${fmt(total)} óra\ntényleges = ${fmt(total)} − ${fmt(P.stop)} (leállás) = ${fmt(real)} óra\nrendelkezésre állás = ${fmt(real)} ÷ ${fmt(total)} = ${fmt(A, 2)}`)),
+    step('Teljesítmény', f(`elvárt idő = ${fmt(P.sample)} db × ${P.cyc} s = ${fmt(exp)} s\nmért idő = ${fmt(P.measured)} s\nteljesítmény = elvárt ÷ mért = ${fmt(Pf, 2)}`), tip('Elvárt ÷ tényleges – fordítva 1 fölötti számot kapnál, ami biztosan rossz.')),
+    step('Minőség', f(`jó termék = ${fmt(P.plan)} − ${fmt(P.scrap)} = ${fmt(good)} db\nminőség = ${fmt(good)} ÷ ${fmt(P.plan)} = ${fmt(Q, 2)}`)),
+    step('OEE', f(`${fmt(A, 2)} × ${fmt(Pf, 2)} × ${fmt(Q, 2)} = ${fmt(oee, 2)} = ${fmt(Math.round(oee * 100))}%`), p('Világszínvonalnak a kb. 85%-os OEE számít.')),
   ];
   return t;
 }

@@ -1,5 +1,5 @@
 // 2. feladattípus – Beszállítói értékelés súlyozott pontrendszerrel, 6 pont
-import { makeTask, addForm, p, ul, note } from './common.js';
+import { makeTask, addForm, p, ul, note, step, f, tip } from './common.js';
 import { fmt, roundTo } from '../util.js';
 
 export const meta = { kind: 'supplier', title: 'Beszállítói értékelés súlyozott pontrendszerrel', points: 6, exam: true, order: 2 };
@@ -85,5 +85,25 @@ function build(P) {
   t.solution = P.s.map((s, i) => p(`${P.names[i]}: mennyiség ${s.qty}/${s.total} = ${fmt(co[i].qty, 3)}; minőség ${s.quality}/${s.total} = ${fmt(co[i].quality, 3)}; idő ${s.time}/${s.total} = ${fmt(co[i].time, 3)}; ár ${fmt(minPrice)}/${fmt(s.price)} = ${fmt(co[i].price, 3)} → (${wQ}×${fmt(co[i].qty, 3)} + ${wM}×${fmt(co[i].quality, 3)} + ${wT}×${fmt(co[i].time, 3)} + ${wP}×${fmt(co[i].price, 3)}) ÷ 100 = ${fmt(pct[i], 1)}%`));
   if (P.keyNote) t.solution.push(note(P.keyNote));
   t.solution.push(note(`A jobb beszállító: ${pct[0] >= pct[1] ? P.names[0] : P.names[1]} (${fmt(Math.max(...pct), 1)}%).`));
+
+  const conv = (s, key, label) => (s.phr[key] === 'pos' ? `${label}: a szöveg a jókat adja meg → ${s[key]}` : `${label}: a szöveg a ROSSZAKAT adja meg (${s.total - s[key]}) → jók = ${s.total} − ${s.total - s[key]} = ${s[key]}`);
+  t.walkthrough = [
+    step('A módszer lényege',
+      p('Minden szempontnál kiszámoljuk, hogy a szállító a szállítások hányad részében teljesített jól (együttható, 0 és 1 között, 3 tizedesre). Ezután a súlyokkal súlyozott átlagot számolunk, ami százalékban adja a kiszolgálási színvonalat.'),
+      f('együttható = megfelelő szállítások ÷ összes szállítás\nár-együttható = legalacsonyabb ár ÷ saját ár\nszínvonal (%) = Σ(súly × együttható) ÷ Σ súly × 100')),
+    ...P.s.map((s, i) => step(`„${P.names[i]}” – a megfelelő szállítások száma`,
+      p(`Összes szállítás: ${s.total}.`),
+      ul([conv(s, 'qty', 'Mennyiségi pontosság'), conv(s, 'time', 'Időbeni pontosság'), conv(s, 'quality', 'Minőségi megfelelés')]),
+      tip('Figyelj a tagadó megfogalmazásra („nem érkezett meg határidőre”, „nem felelt meg”) – ilyenkor ki kell vonni az összesből!'))),
+    step('Az együtthatók kiszámítása (3 tizedes)',
+      ...P.s.map((s, i) => f(`${P.names[i]}: mennyiség ${s.qty}/${s.total} = ${fmt(co[i].qty, 3)} | minőség ${s.quality}/${s.total} = ${fmt(co[i].quality, 3)} | idő ${s.time}/${s.total} = ${fmt(co[i].time, 3)}`)),
+      p(`Ár: a legolcsóbb ár (${fmt(minPrice)} Ft) a viszonyítási alap, mert az a legjobb. A legolcsóbb szállító együtthatója 1,000.`),
+      ...P.s.map((s, i) => f(`${P.names[i]}: ${fmt(minPrice)} ÷ ${fmt(s.price)} = ${fmt(co[i].price, 3)}`))),
+    ...P.s.map((s, i) => step(`„${P.names[i]}” – súlyozott kiszolgálási színvonal`,
+      f(`(${wQ}×${fmt(co[i].qty, 3)} + ${wM}×${fmt(co[i].quality, 3)} + ${wT}×${fmt(co[i].time, 3)} + ${wP}×${fmt(co[i].price, 3)}) ÷ ${wQ + wM + wT + wP} × 100\n= (${fmt(wQ * co[i].qty, 3)} + ${fmt(wM * co[i].quality, 3)} + ${fmt(wT * co[i].time, 3)} + ${fmt(wP * co[i].price, 3)}) ÷ 100 × 100\n= ${fmt(pct[i], 1)}%`))),
+    step('Döntés és tipikus hibák',
+      p(`A magasabb színvonalú szállító: ${pct[0] >= pct[1] ? P.names[0] : P.names[1]}.`),
+      ul(['Az együtthatót 3 tizedesre kerekítsd, és már a kerekített értékkel számolj tovább.', 'Az árnál fordított az arány: legkisebb ár ÷ saját ár (nem fordítva!).', 'A súlyok összege itt 100, ezért ÷ 100 × 100 = maga az összeg.'])),
+  ];
   return t;
 }

@@ -308,3 +308,18 @@ pre.code { background: var(--bg-2); border-radius: 10px; padding: 12px; overflow
 .callout { border: 1px solid var(--border); background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font-size: .92rem; }
 .footer { text-align: center; color: var(--text-3); font-size: .8rem; padding: 20px 16px 40px; }
 .hide { display: none !important; }
+
+/* Levezetés */
+.panel.walk { background: var(--surface-2); border: 1px solid var(--border); }
+.panel.walk h4 { color: var(--accent); }
+.wstep { border-top: 1px solid var(--border); padding: 4px 0; }
+.wstep:first-of-type { margin-top: 8px; }
+.wstep summary { cursor: pointer; font-weight: 600; padding: 7px 0; display: flex; gap: 10px; align-items: center; list-style: none; }
+.wstep summary::-webkit-details-marker { display: none; }
+.wstep summary::after { content: '▸'; margin-left: auto; color: var(--text-3); transition: transform .15s; }
+.wstep[open] summary::after { transform: rotate(90deg); }
+.wnum { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-size: .8rem; }
+.wbody { padding: 2px 0 10px 34px; }
+@media (max-width: 640px) { .wbody { padding-left: 0; } }
+.formula { font-family: var(--mono); font-size: .88rem; background: var(--bg-2); border-radius: 8px; padding: 8px 12px; margin: 6px 0 10px; white-space: pre-wrap; overflow-x: auto; }
+.tipbox { font-size: .88rem; background: var(--warn-soft); border-radius: 8px; padding: 8px 12px; margin: 6px 0 10px; }

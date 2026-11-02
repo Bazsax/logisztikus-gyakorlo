@@ -108,3 +108,7 @@ export const p = (text) => ({ type: 'p', text });
 export const ul = (items) => ({ type: 'ul', items });
 export const table = (head, rows) => ({ type: 'table', head, rows });
 export const note = (text) => ({ type: 'note', text });
+/** Levezetés-lépés: {title, blocks} – a blokkok: p, ul, table, note, f (képlet), tip */
+export const step = (title, ...blocks) => ({ title, blocks: blocks.flat().filter(Boolean) });
+export const f = (text) => ({ type: 'f', text });
+export const tip = (text) => ({ type: 'tip', text });
