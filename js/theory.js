@@ -215,44 +215,8 @@ export function renderTheory(q, st, on) {
               onclick: () => { const a = ans.slice(); a[ii] = a[ii] === gi ? null : gi; on.change(a); },
             }, gn))));
         })));
-    case 'match':
-      return h('div', { class: 'pairs' }, view.l.map((li) => {
-        const v = ans?.[li];
-        let cls = 'pair';
-        if (st.checked && v !== null && v !== undefined) cls += v === li ? ' ok' : ' bad';
-        const sel = h('select', {
-          'aria-label': q.pairs[li][0],
-          onchange: (e) => { const a = ans.slice(); a[li] = e.target.value === '' ? null : Number(e.target.value); on.change(a); },
-        }, h('option', { value: '' }, '— válassz —'), view.r.map((ri, k) => h('option', { value: ri, selected: v === ri }, `${LETTERS[k]}) ${q.pairs[ri][1]}`)));
-        return h('div', { class: cls },
-          h('div', { class: 'l' }, q.pairs[li][0]),
-          h('div', null, sel, st.revealed ? h('div', { class: 'tiny', style: { color: 'var(--ok)', marginTop: '3px' } }, '✓ ' + q.pairs[li][1]) : null));
-      }));
-    case 'order': {
-      const list = h('div', { class: 'order' });
-      const a = ans || view.start;
-      a.forEach((ci, pos) => {
-        let cls = 'oitem';
-        if (st.checked) cls += ci === pos ? ' ok' : ' bad';
-        const move = (d) => { const b = a.slice(); const t = pos + d; if (t < 0 || t >= b.length) return; [b[pos], b[t]] = [b[t], b[pos]]; on.change(b); };
-        const row = h('div', { class: cls, draggable: 'true' },
-          h('span', { class: 'txt' }, q.items[ci], st.revealed && ci !== pos ? h('span', { class: 'tiny', style: { color: 'var(--ok)', marginLeft: '6px' } }, `(helyesen: ${ci + 1}.)`) : null),
-          h('span', { class: 'mv' },
-            h('button', { type: 'button', 'aria-label': 'Fel', onclick: () => move(-1) }, '↑'),
-            h('button', { type: 'button', 'aria-label': 'Le', onclick: () => move(1) }, '↓')));
-        row.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', String(pos)); row.classList.add('dragging'); });
-        row.addEventListener('dragend', () => row.classList.remove('dragging'));
-        row.addEventListener('dragover', (e) => e.preventDefault());
-        row.addEventListener('drop', (e) => {
-          e.preventDefault();
-          const from = Number(e.dataTransfer.getData('text/plain'));
-          if (Number.isNaN(from) || from === pos) return;
-          const b = a.slice(); const [x] = b.splice(from, 1); b.splice(pos, 0, x); on.change(b);
-        });
-        list.appendChild(row);
-      });
-      return list;
-    }
+    case 'match': return renderMatch(q, st, on);
+    case 'order': return renderOrder(q, st, on);
     case 'essay': {
       const a = ans;
       const ta = h('textarea', { placeholder: 'Írd ide a válaszod…', 'aria-label': 'Válasz' });
@@ -368,4 +332,118 @@ export function aiAnswerText(q, a) {
     case 'essay': return [a.answer, a.score !== null && a.score !== undefined ? `AI-pontszám: ${a.score}/${a.max ?? q.keyPoints.length}` : '', a.feedback].filter(Boolean).join('\n');
     default: return JSON.stringify(a);
   }
+}
+
+// ---------- Párosítás: két oszlop, kattintással párosítás ----------
+const LINK_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>';
+const UNLINK_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/><path d="M4 4l16 16"/></svg>';
+const icon = (html) => { const s = h('span', { class: 'ico' }); s.innerHTML = html; return s; };
+
+function renderMatch(q, st, on) {
+  const ans = st.ans || q.pairs.map(() => null);
+  const letterOf = (ri) => LETTERS[st.view.r.indexOf(ri)];
+  const usedR = new Set(ans.filter((v) => v !== null && v !== undefined));
+  let active = null; // {side: 'l'|'r', idx}
+  const wrap = h('div', { class: 'match' });
+
+  const pair = (li, ri) => { const a = ans.slice(); for (let k = 0; k < a.length; k++) if (a[k] === ri) a[k] = null; a[li] = ri; on.change(a); };
+  const unpair = (li) => { const a = ans.slice(); a[li] = null; on.change(a); };
+  const paint = () => wrap.querySelectorAll('.mitem').forEach((el) => el.classList.toggle('active', !!active && el.dataset.side === active.side && Number(el.dataset.idx) === active.idx));
+  const click = (side, idx) => {
+    if (active && active.side === side && active.idx === idx) active = null;           // újra rá: kijelölés törlése
+    else if (active && active.side !== side) { const li = side === 'l' ? idx : active.idx; const ri = side === 'r' ? idx : active.idx; active = null; pair(li, ri); return; }
+    else active = { side, idx };                                                       // azonos oszlop: csere
+    paint();
+  };
+
+  // Már párosított elemek
+  const paired = st.view.l.filter((li) => ans[li] !== null && ans[li] !== undefined);
+  if (paired.length) {
+    wrap.appendChild(h('div', { class: 'mpairs' }, paired.map((li) => {
+      const ri = ans[li];
+      let cls = 'mpair';
+      if (st.checked) cls += ri === li ? ' ok' : ' bad';
+      return h('div', { class: cls },
+        h('div', { class: 'mcell' }, q.pairs[li][0]),
+        h('button', { type: 'button', class: 'unlink', title: 'Párosítás bontása', 'aria-label': `Párosítás bontása: ${q.pairs[li][0]}`, onclick: () => unpair(li) }, icon(LINK_SVG), icon(UNLINK_SVG)),
+        h('div', { class: 'mcell' }, h('span', { class: 'mletter' }, letterOf(ri)), q.pairs[ri][1]));
+    })));
+  }
+
+  // Párosítatlan elemek két oszlopban
+  const freeL = st.view.l.filter((li) => ans[li] === null || ans[li] === undefined);
+  const freeR = st.view.r.filter((ri) => !usedR.has(ri));
+  if (freeL.length || freeR.length) {
+    const col = (side, title, ids, label) => h('div', { class: 'mcol' }, h('div', { class: 'mhead' }, title),
+      ids.map((id) => h('button', { type: 'button', class: 'mitem', 'data-side': side, 'data-idx': id, onclick: () => click(side, id) }, label(id))));
+    wrap.appendChild(h('div', { class: 'mcols' },
+      col('l', 'Megnevezés', freeL, (li) => q.pairs[li][0]),
+      col('r', 'Definíció', freeR, (ri) => [h('span', { class: 'mletter' }, letterOf(ri)), q.pairs[ri][1]])));
+    if (!paired.length) wrap.appendChild(h('div', { class: 'tiny muted' }, 'Kattints egy elemre az egyik oszlopban, majd a hozzá tartozóra a másikban. A párt a köztük lévő lánc ikonnal bonthatod szét.'));
+  }
+
+  if (st.revealed) {
+    wrap.appendChild(h('div', { class: 'msol' }, h('div', { class: 'tiny', style: { fontWeight: 600 } }, 'Helyes párok'),
+      st.view.l.map((li) => h('div', { class: 'small' }, h('strong', null, q.pairs[li][0]), ' → ', `${letterOf(li)}) ${q.pairs[li][1]}`))));
+  }
+  return wrap;
+}
+
+// ---------- Sorrend: fogd és vidd (egér és érintés) ----------
+function renderOrder(q, st, on) {
+  const list = h('div', { class: 'order' });
+  const a = st.ans || st.view.start;
+  const commit = (from, to) => { if (from === to) return; const b = a.slice(); const [x] = b.splice(from, 1); b.splice(to, 0, x); on.change(b); };
+
+  a.forEach((ci, pos) => {
+    let cls = 'oitem';
+    if (st.checked) cls += ci === pos ? ' ok' : ' bad';
+    const grip = h('span', { class: 'grip', 'aria-hidden': 'true' }, '⋮⋮');
+    const row = h('div', { class: cls },
+      grip,
+      h('span', { class: 'onum' }, `${pos + 1}.`),
+      h('span', { class: 'txt' }, q.items[ci], st.revealed && ci !== pos ? h('span', { class: 'tiny', style: { color: 'var(--ok)', marginLeft: '6px' } }, `(helyesen: ${ci + 1}.)`) : null),
+      h('span', { class: 'mv' },
+        h('button', { type: 'button', 'aria-label': 'Fel', disabled: pos === 0, onclick: () => commit(pos, pos - 1) }, '↑'),
+        h('button', { type: 'button', 'aria-label': 'Le', disabled: pos === a.length - 1, onclick: () => commit(pos, pos + 1) }, '↓')));
+
+    row.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      if (e.pointerType !== 'mouse' && !e.target.closest('.grip')) return; // érintésnél a fogantyúval, hogy a görgetés működjön
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      e.preventDefault();
+      const rows = [...list.children];
+      const rects = rows.map((r) => r.getBoundingClientRect());
+      const gap = rects.length > 1 ? Math.max(0, rects[1].top - rects[0].bottom) : 6;
+      const shift = rects[pos].height + gap;
+      const startY = e.clientY;
+      let target = pos;
+      row.classList.add('dragging'); list.classList.add('sorting');
+      try { row.setPointerCapture(e.pointerId); } catch { /* */ }
+      const move = (ev) => {
+        const dy = ev.clientY - startY;
+        row.style.transform = `translateY(${dy}px)`;
+        const mid = rects[pos].top + rects[pos].height / 2 + dy;
+        target = pos;
+        for (let k = 0; k < pos; k++) if (mid < rects[k].top + rects[k].height / 2) { target = k; break; }
+        if (target === pos) for (let k = rects.length - 1; k > pos; k--) if (mid > rects[k].top + rects[k].height / 2) { target = k; break; }
+        rows.forEach((r, k) => {
+          if (k === pos) return;
+          let s = 0;
+          if (pos < target && k > pos && k <= target) s = -shift;
+          if (pos > target && k >= target && k < pos) s = shift;
+          r.style.transform = s ? `translateY(${s}px)` : '';
+        });
+      };
+      const up = () => {
+        row.removeEventListener('pointermove', move); row.removeEventListener('pointerup', up); row.removeEventListener('pointercancel', up);
+        rows.forEach((r) => { r.style.transform = ''; });
+        row.classList.remove('dragging'); list.classList.remove('sorting');
+        commit(pos, target);
+      };
+      row.addEventListener('pointermove', move); row.addEventListener('pointerup', up); row.addEventListener('pointercancel', up);
+    });
+    list.appendChild(row);
+  });
+  return list;
 }
