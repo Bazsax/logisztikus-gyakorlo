@@ -7,7 +7,7 @@ Gyakorló webalkalmazás a **logisztikus (programkövetelmény: 10415006) állam
 - **Elméleti feladatok** – egyszeres és többszörös választás, igaz–hamis, csoportosítás, párosítás, sorrendbe rendezés, kifejtős (definíciós) kérdések. A kérdésbank a Redmenta-feladatlapok javítókulcsai alapján készült.
 - **Gyakorlati feladatok** – a projektfeladat 8 típusa paraméteres generátorral (minden indításkor új számok), a táblázatok közvetlenül kitölthetők:
   1. Elosztási szükséglettervezés (DRP) · 2. Beszállítói értékelés súlyozott pontrendszerrel · 3. Gazdaságos rendelési tételnagyság (EOQ) · 4. Anyagszükséglet-tervezés (MRP) · 5. Johnson-szabály · 6. Forgási idő és sebesség kronologikus átlaggal · 7. Termelési jellemzők · 8. Körjárat sor-/oszlopminimum módszerrel
-  - Extra típusok a korábbi vizsgafeladatsorokból: rendelésütemezés (késés, tartalékidő), ABC-analízis, OEE, készletszintek és összköltség (EOQ), három beszállító %-os értékelése, FIFO/LIFO/átlagár. Az MRP többszintű (részegység + közös alkatrész) változatban is előfordul.
+  - Extra típusok a korábbi vizsgafeladatsorokból: rendelésütemezés (késés, tartalékidő), ABC-analízis, OEE, készletszintek és összköltség (EOQ), három beszállító %-os értékelése, FIFO/LIFO/átlagár, minőségügyi mutatók (hibaráta, minőségi kategória és együttható). Az MRP többszintű (részegység + közös alkatrész) változatban is előfordul.
   - „A mintavizsga (Gamer szék) adatai” opció a tanfolyami mintafeladatot adja vissza, a hivatalos pontozás szerint.
 - **Vegyes** mód és **vizsgaszimuláció** (írásbeli 60 perc / 30%, projektfeladat 120 perc / 70%, részenként min. 50%, érdemjegy).
 - **Tipp** (3 fokozat), **Megoldás**, **Magyarázat**, **Kitöltés** – feladatonként és egyszerre az összesre.

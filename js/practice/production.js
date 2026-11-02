@@ -41,6 +41,11 @@ function build(P) {
     { label: 'Szükséges dolgozói létszám a maximális kibocsátás teljesítéséhez (fő)', field: { expect: Math.ceil(workers - 1e-9), unit: 'fő' }, pts: 1 },
     { label: 'Kibocsátás óránként, ha a teljes munkafolyamatot 1 fő dolgozó végzi (db/óra)', field: { ...fld(Math.floor(perHour + 1e-9), both(perHour).slice(0, 2)), unit: 'db' }, pts: 1 },
   ]);
+  addForm(t, 'x', 'Kiegészítő kérdések (nem pontozott, a tanfolyami feladatsorokból)', ['Adat/mutató', 'Eredmény'], [
+    { label: 'Összes műveleti idő = a termék gyártási átfutási ideje (perc)', field: { expect: sum, unit: 'perc' }, pts: 0, calc: false, ptsLabel: '–' },
+    { label: 'Ciklusidő (perc)', field: { expect: cyc, unit: 'perc' }, pts: 0, calc: false, ptsLabel: '–' },
+    { label: 'Veszteségidő ciklusonként, ha minden műveletet más személy végez (perc)', field: { expect: P.ops.length * cyc - sum, unit: 'perc' }, pts: 0, calc: false, ptsLabel: '–' },
+  ]);
   t.hints = [
     'Szalagszerű munkánál az ütemidőt (ciklusidőt) a LEGHOSSZABB művelet határozza meg – ez a szűk keresztmetszet.',
     'Max. kibocsátás = műszak percben ÷ ciklusidő. Létszám = összes műveleti idő ÷ ciklusidő, FELFELÉ kerekítve (fél ember nincs). Egy dolgozónál egy termék a teljes műveleti időösszegig tart.',
@@ -50,6 +55,7 @@ function build(P) {
     p(`Ciklusidő = a leghosszabb művelet = ${cyc} perc → ${fmt(mins)} ÷ ${cyc} = ${fmt(out, 2)} → ${Math.floor(out + 1e-9)} db/műszak`),
     p(`Létszám = ${sum} ÷ ${cyc} = ${fmt(workers, 2)} → felfelé kerekítve ${Math.ceil(workers - 1e-9)} fő`),
     p(`1 fő esetén: 60 ÷ ${sum} = ${fmt(perHour, 3)} → ${Math.floor(perHour + 1e-9)} db/óra (logikai kerekítéssel lefelé; matematikai kerekítés is elfogadott)`),
+    p(`Veszteségidő: ${P.ops.length} művelet × ${cyc} perc − ${sum} perc = ${P.ops.length * cyc - sum} perc ciklusonként (minden dolgozó a leglassabb művelet ütemére vár).`),
     note('Késztermékről van szó, ezért a logikai (lefelé) kerekítés a védhetőbb, de a vizsgán mindkettő elfogadott.'),
   ];
   return t;

@@ -81,12 +81,12 @@ export function fmt(n, dec = null) {
 }
 
 /** Felhasználói szám beolvasása: szóközök, ezres elválasztó, vessző, mértékegység. */
-export function parseNum(str) {
+export function parseNum(str, decimals = 0) {
   if (str === null || str === undefined) return null;
   let s = String(str).trim();
   if (!s) return null;
   s = s.replace(/[\s ]/g, '').replace(/−/g, '-').replace(/(ft|db|nap|perc|fő|km|%|fordulat\/év|millióft)$/i, '');
-  if (/^-?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g, '');
+  if (!decimals && /^-?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g, '');
   s = s.replace(',', '.');
   if (!/^-?\d*\.?\d+$/.test(s)) return NaN;
   return parseFloat(s);

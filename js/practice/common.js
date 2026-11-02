@@ -74,7 +74,7 @@ export function checkField(field, raw) {
     return 'empty';
   }
   if (field.type === 'select') return String(raw) === String(field.expect) ? 'ok' : 'bad';
-  const v = parseNum(raw);
+  const v = parseNum(raw, field.dec || 0);
   if (v === null || Number.isNaN(v)) return 'bad';
   const targets = [field.expect, ...(field.accept || [])];
   const tol = field.tol ?? (0.5 * 10 ** -(field.dec ?? 0) + 1e-9);

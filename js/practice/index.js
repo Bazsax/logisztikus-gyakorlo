@@ -14,8 +14,9 @@ import * as abc from './abc.js';
 import * as oee from './oee.js';
 import * as stock from './stock.js';
 import * as supplier3 from './supplier3.js';
+import * as quality from './quality.js';
 
-export const GENERATORS = [drp, supplier, eoq, mrp, johnson, turnover, production, route, valuation, sched, abc, oee, stock, supplier3]
+export const GENERATORS = [drp, supplier, eoq, mrp, johnson, turnover, production, route, valuation, sched, abc, oee, stock, supplier3, quality]
   .sort((a, b) => a.meta.order - b.meta.order);
 
 export const byKind = Object.fromEntries(GENERATORS.map((g) => [g.meta.kind, g]));
