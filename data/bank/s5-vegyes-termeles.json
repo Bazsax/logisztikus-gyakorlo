@@ -1,29 +1,702 @@
 [
-{"id":"vegy-01","topic":"Termelési logisztika","type":"multi","prompt":"Melyek a push rendszer hátrányai?","options":["nagy az átfutási idő","nagy raktári készlet halmozódik fel","nagy a forgási sebessége","alacsony a tőkelekötés"],"answer":[0,1],"explanation":"A push (toló) rendszer előrejelzésre termel: nagy készletek és hosszú átfutási idők alakulnak ki. Nagy forgási sebesség és alacsony tőkelekötés a pull rendszer jellemzője.","source":"redmenta"},
-{"id":"vegy-02","topic":"Termelési logisztika","type":"multi","prompt":"Melyek a JIT rendszerhez tartozó helyes kifejezések?","options":["alacsony raktár- és készletezési költség","hosszú távú szoros együttműködés","nulla hibás szállítást kell teljesíteni","magas termelékenység","különleges odafigyelés a beszállító részéről","alacsonyabb lekötött tőke","alacsony szállítási költségek","befektetés lassú megtérülése","magas átfutási idők"],"answer":[0,1,2,3,4,5],"explanation":"JIT: kis készlet, kevés lekötött tőke, nulla hiba, szoros beszállítói együttműködés. A gyakori, kis tételű szállítás miatt a szállítási költség NEM alacsony.","source":"redmenta"},
-{"id":"vegy-03","topic":"Logisztikai alapismeretek","type":"single","prompt":"Melyik tartozik a vállalkozás makrokörnyezetébe?","options":["pénzügyi intézmények","versenytársak","vevők"],"answer":0,"explanation":"A vevők és a versenytársak a közvetlen (mikro)környezet szereplői; a Redmenta-kulcs a pénzügyi intézményeket a makrokörnyezethez sorolta.","source":"redmenta"},
-{"id":"vegy-04","topic":"Logisztikai alapismeretek","type":"multi","prompt":"Válassza ki azokat a jellemzőket, amelyeket a logisztika 9M követelményeinek teljesítenie kell!","options":["állapot","minőség","termék","ár","mennyiség","csomagolás"],"answer":[0,1,2,3,4],"explanation":"A 9M: megfelelő termék, mennyiség, minőség, állapot, hely, idő, ár, vevő, információ. A csomagolás nem önálló „M”.","source":"redmenta"},
-{"id":"vegy-05","topic":"Termelési logisztika","type":"single","prompt":"Egy termelő vállalat normál kapacitása 5 000 db/hónap. A csúcskapacitás maximális értéke a normál kapacitás 120%-a. Ennek megfelelően a normál kapacitáson felül évente …… ezer darab terméket képes a vállalat előállítani.","options":["12","6","1","72"],"answer":0,"explanation":"Csúcskapacitás 6 000 db/hó → többlet 1 000 db/hó → × 12 = 12 000 db = 12 ezer db.","source":"redmenta"},
-{"id":"vegy-06","topic":"Termelési logisztika","type":"single","prompt":"Ha egy termék termelési folyamatának lépései és a kapcsolódó műveleti idők a következők: 1. művelet 2 perc, 2. művelet 3 perc, 3. művelet 2,5 perc, 4. művelet 1,5 perc, akkor 8 óra alatt egy soron maximum legyártható termékek száma … darab.","options":["160","320","6","53,33"],"answer":0,"explanation":"Az ütemet a leghosszabb (szűk keresztmetszeti) művelet adja: 3 perc. 480 perc ÷ 3 = 160 db.","source":"redmenta"},
-{"id":"vegy-07","topic":"Termelési logisztika","type":"order","prompt":"A vállalkozás rendeléseit állítsa sorrendbe a legrövidebb munkaidő prioritásának megfelelően!","items":["15 munkaóra","18 munkaóra","20 munkaóra","22 munkaóra","25 munkaóra"],"explanation":"SPT (legrövidebb műveleti idő) szabály: növekvő sorrend.","source":"redmenta"},
-{"id":"vegy-08","topic":"Készletgazdálkodás","type":"single","prompt":"Mennyi a felhasznált készlet értéke LIFO módszerrel? Beszerzés: június 1.: 100 egység 10 Ft/db áron, június 10.: 50 egység 12 Ft/db áron. A felhasználás: 70 egység.","options":["800","900","600","820"],"answer":0,"explanation":"LIFO: előbb a legutóbbi tételből: 50 × 12 = 600 Ft, majd 20 × 10 = 200 Ft → 800 Ft.","source":"redmenta"},
-{"id":"vegy-09","topic":"Termelési logisztika","type":"match","prompt":"A leggyakrabban alkalmazott termeléstervezési prioritási szabályok leírását párosítsa a fogalmakhoz!","pairs":[["Legrövidebb műveleti idő","…esetén a feladatok a műveleti idők sorrendje alapján követik egymást."],["Elsőként beérkező elsőnek kiszolgálva","FIFO elvnél a beérkezési sorrend szerint végezzük el a műveleteket."],["Kritikus ráta","…szabálya esetén a véghatáridőkig hátralévő idő és a műveleti idő hányadosa alapján rangsoroljuk a műveleteket, és a legkisebb rátájú művelet elvégzésével kezdjük a sorrendet."],["VIP elv","Az dönti el a feldolgozás sorrendjét, hogy mennyire fontos az ügyfél a megrendelő számára."],["Indítási idő","A rendelési határidő és a hátralévő műveleti idők különbségeként határozzuk meg."]],"explanation":"Kritikus ráta = hátralévő idő ÷ műveleti idő (a legkisebbel kezdünk). Indítási idő = határidő − hátralévő műveleti idő.","source":"redmenta"},
-{"id":"vegy-10","topic":"Készletgazdálkodás","type":"single","prompt":"Egy vállalat 18 fajta terméket készletez, melyekről ABC-analízis készül. Amennyiben az A:B:C aránya 1:3:5, akkor az egyes kategóriákba tartozó termékfajták száma:","options":["A-2, B-6, C-10","A-1, B-3, C-5","A-5, B-3, C-1"],"answer":0,"explanation":"1 + 3 + 5 = 9 rész; 18 ÷ 9 = 2 → A = 2, B = 6, C = 10.","source":"redmenta"},
-{"id":"vegy-11","topic":"Készletgazdálkodás","type":"single","prompt":"Ha a beszerzés időrendi sorrendben a következő: 100 db 500 Ft/db áron, 110 db 550 Ft/db áron, 90 db 450 Ft/db áron, akkor a LIFO elv szerint 100 darab felhasználása esetén a felhasználás értéke …. ezer forint.","options":["46","55","50","45"],"answer":0,"explanation":"LIFO: 90 × 450 = 40 500 Ft + 10 × 550 = 5 500 Ft → 46 000 Ft.","source":"redmenta"},
-{"id":"vegy-12","topic":"Logisztikai alapismeretek","type":"match","prompt":"Párosítsa a folyamatirányítási információkat a megfelelő fogalmakhoz!","pairs":[["Primer információ","Megrendelést jelenti, és az ellátási körzetből érkezik a raktárirányításhoz."],["Szekunder információ","A raktárirányítás által a megrendelések feldolgozása után a folyamat végrehajtási szintje felé kibocsátott utasítások."],["Tercier információ","Az utasításban szereplő feladatok végrehajtásának elvégzését igazolják vissza a raktárirányítás felé, amelyek alapján a raktárirányítás nyilvántartja az adott folyamat aktuális állapotát, illetve módosítja a háttérinformációkat."],["Nyilvántartási információk","A beszerzett vagy kiadásra váró áruk helyének, illetve alapvető adatainak rendszere."],["Háttérinformációk","Nyilvántartás jellegűek, az utasítások kiadásához használja fel őket a raktárirányítás."]],"explanation":"Primer = megrendelés be; szekunder = utasítás ki; tercier = visszaigazolás vissza.","source":"redmenta"},
-{"id":"vegy-13","topic":"Logisztikai alapismeretek","type":"single","prompt":"Mit ábrázol a következő ábra? (Nyersanyag-kitermelés/beszállítók → Ellátás → Termelés → Elosztás → Fogyasztók/piac; alul visszafelé: hulladék-feldolgozás, megsemmisítés/hasznosítás; szaggatott vonalak: visszacsatolás.)","options":["A logisztika anyag- és információáramlását.","A logisztika információáramlását.","A logisztika anyagáramlását."],"answer":0,"explanation":"Az ábrán az anyagáramlás (folyamatos nyilak) és az információáramlás (szaggatott visszacsatolás) is szerepel.","source":"redmenta"},
-{"id":"vegy-14","topic":"Termelési logisztika","type":"truefalse","prompt":"Döntsd el, hogy igazak vagy hamisak-e az alábbi állítások! (JIT, Kanban, OPT, szinkrongyártás)","statements":[["Az OPT rendszernek 4 összetevője van: dob, tartalék, kötél, orsó.",false],["A Kanban japán szó, „táblát” jelent.",false],["A JIT hátránya a túl erős partnerfüggőség.",true],["A szinkrongyártás hasonló a JIT rendszerhez.",false],["A Kanban rendszerben nem számít az alkatrészek minősége.",false],["A JIT rendszer célja a készletezéssel létrehozott munkafolyamat kialakítása.",false],["A szinkrongyártás alapelve: „Termeld meg azt, amire holnap szükséged lesz.”",true],["JIT rendszerben gondosan kiválasztott beszállítókkal kell dolgozni.",true],["A JIT rendszerben a pull rendszer érvényesül.",true],["OPT – optimalizált gyártási mechanizmus.",false],["A Kanban rendszerben a pull rendszer érvényesül.",true],["JIT – éppen jókor rendszer.",false],["A Kanban rendszer előnye a hulladék minimalizálása.",true],["A szűk keresztmetszet olyan erőforrás, amelynek kapacitása egyenlő az iránta megnyilvánuló igénnyel.",true],["Szinkrongyártás esetén sosem valósul meg a raktár nélküli termelés.",false]],"explanation":"Két külön Redmenta-javítókulcs egyezően így értékelt. A tanári értelmezés: Kanban = (jelző)kártya, JIT = „éppen időben”, OPT = Optimized Production Technology (optimalizált gyártástechnológia; 3 eleme: dob–puffer–kötél). A szűk keresztmetszet kapacitása legfeljebb akkora, mint az igény (egyenlő vagy kisebb), ezért az állítás igaz.","source":"redmenta"},
-{"id":"vegy-15","topic":"Logisztikai alapismeretek","type":"multi","prompt":"Melyek az anyagáramlási rendszer részei?","options":["Gyűjtés és osztályozás","Rakodás","Vállalaton kívüli anyagáramlás","Csomagolás","Tárolás","Szállítás"],"answer":[0,1,2,3,4,5],"explanation":"Mind a hat elem az anyagáramlási rendszer része.","source":"redmenta"},
-{"id":"vegy-16","topic":"Termelési logisztika","type":"multi","prompt":"Melyek a termelésirányítás korszerű megoldásai? Válassza ki a helyeseket!","options":["JIT","szinkrongyártás","Kanban","OPT rendszer","tömeggyártás","egyedi gyártás"],"answer":[0,1,2,3],"explanation":"A tömeggyártás és az egyedi gyártás gyártási típus, nem termelésirányítási módszer.","source":"redmenta"},
-{"id":"vegy-17","topic":"Termelési logisztika","type":"multi","prompt":"Melyek a Kanban rendszer előnyei?","options":["rugalmas","megelőzi a túltermelést","minimalizálja a hulladékot","csökkenti az átfutási időket","jelentősen csökkenti a készletszinteket","egyszerű, könnyen érthető","átláthatóvá teszi az anyagáramlást","bonyolult rendszer","túltermelést okozhat","hosszú átfutási idők","rugalmatlan","hulladék mennyisége növekszik"],"answer":[0,1,2,3,4,5,6],"explanation":"A hamis opciók az előnyök ellentétei.","source":"redmenta"},
-{"id":"vegy-18","topic":"Logisztikai alapismeretek","type":"single","prompt":"Ha a kiszolgálási színvonal terve 98%-os, akkor az azt jelenti, hogy terv szerint 300 szállításból …. szállítás nem lesz megfelelő.","options":["6","2","98","294"],"answer":0,"explanation":"300 × 2% = 6 szállítás.","source":"redmenta"},
-{"id":"vegy-19","topic":"Készletgazdálkodás","type":"single","prompt":"Ha a forgási idő 10 nap, az átlagkészlet 10 millió forint, az időszak napjainak száma 30 nap, akkor mennyi az adott időszak forgalma … millió forint?","options":["30","3","10","100"],"answer":0,"explanation":"Forgási idő = átlagkészlet × napok ÷ forgalom → forgalom = 10 × 30 ÷ 10 = 30 millió Ft (forgási sebesség = 3).","source":"redmenta"},
-{"id":"vegy-20","topic":"Termelési logisztika","type":"single","prompt":"Egy gyártási folyamatban a termékek elkészítésének átfutási ideje 22 perc, a ciklusidő pedig 6 perc. A munkavállalók párhuzamosan, különböző műveleteket végeznek. Hány főre van szükség a folyamat lebonyolításához?","options":["4 főre","3 főre","2 főre"],"answer":0,"explanation":"22 ÷ 6 = 3,67 → felfelé kerekítve 4 fő.","source":"redmenta"},
-{"id":"term-01","topic":"Termelési logisztika","type":"truefalse","prompt":"Melyek a JIT rendszerhez tartozó helyes kifejezések?","statements":[["hosszú távú szoros együttműködés",true],["magas átfutási idők",false],["befektetés lassú megtérülése",false],["nulla hibás szállítást kell teljesíteni",true],["alacsony szállítási költségek",false],["különleges odafigyelés a beszállító részéről",true],["alacsony raktár- és készletezési költség",true],["alacsonyabb lekötött tőke",true],["magas termelékenység",true]],"explanation":"Ugyanaz a tartalom, mint a JIT-es többszörös választós kérdésnél, igaz-hamis formában.","source":"redmenta"},
-{"id":"term-02","topic":"Termelési logisztika","type":"truefalse","prompt":"Melyek a Kanban rendszer előnyei?","statements":[["túltermelést okozhat",false],["megelőzi a túltermelést",true],["jelentősen csökkenti a készletszinteket",true],["bonyolult rendszer",false],["rugalmatlan",false],["hosszú átfutási idők",false],["egyszerű, könnyen érthető",true],["rugalmas",true],["csökkenti az átfutási időket",true],["átláthatóvá teszi az anyagáramlást",true],["hulladék mennyisége növekszik",false],["minimalizálja a hulladékot",true]],"explanation":"12/12-es Redmenta-eredmény alapján.","source":"redmenta"},
-{"id":"term-03","topic":"Termelési logisztika","type":"multi","prompt":"Milyen gyártási módok valósulnak meg a gyártás tömegszerűsége alapján történő besorolásnál?","options":["egyedi gyártás","sorozatgyártás","tömeggyártás","kötegelt gyártás","szakaszos folyamat","projekt jellegű folyamat"],"answer":[0,1,2,3],"explanation":"A Redmenta-kulcs szerint a kötegelt gyártás is ide tartozik (a korábbi megoldásból ez kimaradt). A szakaszos és a projekt jellegű folyamat a folyamattípus szerinti besorolás része.","source":"redmenta"},
-{"id":"term-04","topic":"Termelési logisztika","type":"multi","prompt":"Határozza meg a pull rendszer előnyeit!","options":["nagyobb kapacitáskihasználással minimálisra szorítható a költség","nem halmozódnak fel készletek","a forgási sebesség nő","a termék átfutási ideje minimumra csökkenthető"],"answer":[0,1,2,3],"explanation":"Mind a négy állítás a pull (húzó) rendszer előnye.","source":"redmenta"},
-{"id":"term-05","topic":"Termelési logisztika","type":"truefalse","prompt":"Döntsd el, hogy igazak vagy hamisak-e az alábbi állítások!","statements":[["Tömeggyártás esetén alacsony volumenben termelnek.",false],["Folyamatrendszerű gyártásnál a termékek mindig ugyanazon lépéssorrendet követve haladnak végig a termelési folyamaton.",true],["A pull termelésirányítási rendszer a prognosztizált megrendelési adatokra épül.",false],["A push termelésirányítási rendszer meglévő készleten lévő anyagokból kezdi meg a gyártást.",false],["Sorozatgyártásnál ugyanolyan termékeket állítanak elő egy időben vagy közvetlenül egymás után.",true],["A gyártási vagy termelési logisztika outputja az értékesítési logisztika kezdete.",true],["A termelési rendszer célja a kitűzött termelési cél elérése a gazdaságosságot figyelmen kívül hagyva.",false],["A pull rendszer alkalmazásával a vevőkiszolgálási színvonal magas szinten biztosítható.",true],["Műhelyrendszerű gyártásnál egy adott termék előállításához szükséges technológiai műveleteket egy területre vonják össze.",false],["A gyártási vagy termelési logisztika inputja a beszerzési logisztika vége.",true]],"explanation":"A Redmenta-kulcs két helyen eltér a korábbi megoldástól: a push rendszer az előrejelzés (terv) alapján indítja a gyártást, nem a meglévő készletből; a műhelyrendszerben az AZONOS műveleteket végző gépeket vonják össze egy műhelybe (egy termék összes műveletét a csoportos/cellás elrendezés hozza egy helyre).","source":"redmenta"},
-{"id":"term-06","topic":"Termelési logisztika","type":"match","prompt":"Párosítsa a termelési logisztika transzformációs folyamatait!","pairs":[["tárolás","raktározás"],["fizikai természetű","autó összeszerelés"],["csere","kereskedelem"],["helyzeti","szállítás"],["kémiai","bor gyártása"]],"explanation":"Időbeli (tárolás), fizikai, csere (tulajdonosváltás), helyzeti (térbeli) és kémiai átalakítás.","source":"redmenta"},
-{"id":"term-07","topic":"Termelési logisztika","type":"multi","prompt":"Mely ismérvek jellemzőek a sorozatgyártásra?","options":["általában szabványos termékstratégiáknál alkalmazzák","biztosítja az átállást egyik sorozatról a másikra","lehet egészen magas az előállított volumen","operatív irányításigénye kisebb","egy sorozaton belül a minőségi tulajdonságok azonosak","univerzális és célgépeket egyaránt alkalmaznak","fő kérdés az optimális sorozatnagyság meghatározása","alacsony volumenben termelnek","magasak a fajlagos gyártási költségek","beruházásigényes"],"answer":[0,1,2,3,4,5,6],"explanation":"A Redmenta-kulcs szerint hét helyes ismérv van (a szabványos termékstratégia és a kisebb operatív irányításigény is). Az alacsony volumen és a magas fajlagos költség az egyedi gyártásra, a nagy beruházásigény a tömeggyártásra jellemző.","source":"redmenta"}
+  {
+    "id": "vegy-01",
+    "topic": "Termelési logisztika",
+    "type": "multi",
+    "prompt": "Melyek a push rendszer hátrányai?",
+    "options": [
+      "nagy az átfutási idő",
+      "nagy raktári készlet halmozódik fel",
+      "nagy a forgási sebessége",
+      "alacsony a tőkelekötés"
+    ],
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "A push (toló) rendszer előrejelzésre termel: nagy készletek és hosszú átfutási idők alakulnak ki. Nagy forgási sebesség és alacsony tőkelekötés a pull rendszer jellemzője.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-02",
+    "topic": "Termelési logisztika",
+    "type": "multi",
+    "prompt": "Melyek a JIT rendszerhez tartozó helyes kifejezések?",
+    "options": [
+      "alacsony raktár- és készletezési költség",
+      "hosszú távú szoros együttműködés",
+      "nulla hibás szállítást kell teljesíteni",
+      "magas termelékenység",
+      "különleges odafigyelés a beszállító részéről",
+      "alacsonyabb lekötött tőke",
+      "alacsony szállítási költségek",
+      "befektetés lassú megtérülése",
+      "magas átfutási idők"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "explanation": "JIT: kis készlet, kevés lekötött tőke, nulla hiba, szoros beszállítói együttműködés. A gyakori, kis tételű szállítás miatt a szállítási költség NEM alacsony.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-03",
+    "topic": "Logisztikai alapismeretek",
+    "type": "single",
+    "prompt": "Melyik tartozik a vállalkozás makrokörnyezetébe?",
+    "options": [
+      "pénzügyi intézmények",
+      "versenytársak",
+      "vevők"
+    ],
+    "answer": 0,
+    "explanation": "A vevők és a versenytársak a közvetlen (mikro)környezet szereplői; a Redmenta-kulcs a pénzügyi intézményeket a makrokörnyezethez sorolta.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-04",
+    "topic": "Logisztikai alapismeretek",
+    "type": "multi",
+    "prompt": "Válassza ki azokat a jellemzőket, amelyeket a logisztika 9M követelményeinek teljesítenie kell!",
+    "options": [
+      "állapot",
+      "minőség",
+      "termék",
+      "ár",
+      "mennyiség",
+      "csomagolás"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "explanation": "A 9M: megfelelő termék, mennyiség, minőség, állapot, hely, idő, ár, vevő, információ. A csomagolás nem önálló „M”.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-05",
+    "topic": "Termelési logisztika",
+    "type": "single",
+    "prompt": "Egy termelő vállalat normál kapacitása 5 000 db/hónap. A csúcskapacitás maximális értéke a normál kapacitás 120%-a. Ennek megfelelően a normál kapacitáson felül évente …… ezer darab terméket képes a vállalat előállítani.",
+    "options": [
+      "12",
+      "6",
+      "1",
+      "72"
+    ],
+    "answer": 0,
+    "explanation": "Csúcskapacitás 6 000 db/hó → többlet 1 000 db/hó → × 12 = 12 000 db = 12 ezer db.",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "vegy-06",
+    "topic": "Termelési logisztika",
+    "type": "single",
+    "prompt": "Ha egy termék termelési folyamatának lépései és a kapcsolódó műveleti idők a következők: 1. művelet 2 perc, 2. művelet 3 perc, 3. művelet 2,5 perc, 4. művelet 1,5 perc, akkor 8 óra alatt egy soron maximum legyártható termékek száma … darab.",
+    "options": [
+      "160",
+      "320",
+      "6",
+      "53,33"
+    ],
+    "answer": 0,
+    "explanation": "Az ütemet a leghosszabb (szűk keresztmetszeti) művelet adja: 3 perc. 480 perc ÷ 3 = 160 db.",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "vegy-07",
+    "topic": "Termelési logisztika",
+    "type": "order",
+    "prompt": "A vállalkozás rendeléseit állítsa sorrendbe a legrövidebb munkaidő prioritásának megfelelően!",
+    "items": [
+      "15 munkaóra",
+      "18 munkaóra",
+      "20 munkaóra",
+      "22 munkaóra",
+      "25 munkaóra"
+    ],
+    "explanation": "SPT (legrövidebb műveleti idő) szabály: növekvő sorrend.",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "vegy-08",
+    "topic": "Készletgazdálkodás",
+    "type": "single",
+    "prompt": "Mennyi a felhasznált készlet értéke LIFO módszerrel? Beszerzés: június 1.: 100 egység 10 Ft/db áron, június 10.: 50 egység 12 Ft/db áron. A felhasználás: 70 egység.",
+    "options": [
+      "800",
+      "900",
+      "600",
+      "820"
+    ],
+    "answer": 0,
+    "explanation": "LIFO: előbb a legutóbbi tételből: 50 × 12 = 600 Ft, majd 20 × 10 = 200 Ft → 800 Ft.",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "vegy-09",
+    "topic": "Termelési logisztika",
+    "type": "match",
+    "prompt": "A leggyakrabban alkalmazott termeléstervezési prioritási szabályok leírását párosítsa a fogalmakhoz!",
+    "pairs": [
+      [
+        "Legrövidebb műveleti idő",
+        "…esetén a feladatok a műveleti idők sorrendje alapján követik egymást."
+      ],
+      [
+        "Elsőként beérkező elsőnek kiszolgálva",
+        "FIFO elvnél a beérkezési sorrend szerint végezzük el a műveleteket."
+      ],
+      [
+        "Kritikus ráta",
+        "…szabálya esetén a véghatáridőkig hátralévő idő és a műveleti idő hányadosa alapján rangsoroljuk a műveleteket, és a legkisebb rátájú művelet elvégzésével kezdjük a sorrendet."
+      ],
+      [
+        "VIP elv",
+        "Az dönti el a feldolgozás sorrendjét, hogy mennyire fontos az ügyfél a megrendelő számára."
+      ],
+      [
+        "Indítási idő",
+        "A rendelési határidő és a hátralévő műveleti idők különbségeként határozzuk meg."
+      ]
+    ],
+    "explanation": "Kritikus ráta = hátralévő idő ÷ műveleti idő (a legkisebbel kezdünk). Indítási idő = határidő − hátralévő műveleti idő.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-10",
+    "topic": "Készletgazdálkodás",
+    "type": "single",
+    "prompt": "Egy vállalat 18 fajta terméket készletez, melyekről ABC-analízis készül. Amennyiben az A:B:C aránya 1:3:5, akkor az egyes kategóriákba tartozó termékfajták száma:",
+    "options": [
+      "A-2, B-6, C-10",
+      "A-1, B-3, C-5",
+      "A-5, B-3, C-1"
+    ],
+    "answer": 0,
+    "explanation": "1 + 3 + 5 = 9 rész; 18 ÷ 9 = 2 → A = 2, B = 6, C = 10.",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "vegy-11",
+    "topic": "Készletgazdálkodás",
+    "type": "single",
+    "prompt": "Ha a beszerzés időrendi sorrendben a következő: 100 db 500 Ft/db áron, 110 db 550 Ft/db áron, 90 db 450 Ft/db áron, akkor a LIFO elv szerint 100 darab felhasználása esetén a felhasználás értéke …. ezer forint.",
+    "options": [
+      "46",
+      "55",
+      "50",
+      "45"
+    ],
+    "answer": 0,
+    "explanation": "LIFO: 90 × 450 = 40 500 Ft + 10 × 550 = 5 500 Ft → 46 000 Ft.",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "vegy-12",
+    "topic": "Logisztikai alapismeretek",
+    "type": "match",
+    "prompt": "Párosítsa a folyamatirányítási információkat a megfelelő fogalmakhoz!",
+    "pairs": [
+      [
+        "Primer információ",
+        "Megrendelést jelenti, és az ellátási körzetből érkezik a raktárirányításhoz."
+      ],
+      [
+        "Szekunder információ",
+        "A raktárirányítás által a megrendelések feldolgozása után a folyamat végrehajtási szintje felé kibocsátott utasítások."
+      ],
+      [
+        "Tercier információ",
+        "Az utasításban szereplő feladatok végrehajtásának elvégzését igazolják vissza a raktárirányítás felé, amelyek alapján a raktárirányítás nyilvántartja az adott folyamat aktuális állapotát, illetve módosítja a háttérinformációkat."
+      ],
+      [
+        "Nyilvántartási információk",
+        "A beszerzett vagy kiadásra váró áruk helyének, illetve alapvető adatainak rendszere."
+      ],
+      [
+        "Háttérinformációk",
+        "Nyilvántartás jellegűek, az utasítások kiadásához használja fel őket a raktárirányítás."
+      ]
+    ],
+    "explanation": "Primer = megrendelés be; szekunder = utasítás ki; tercier = visszaigazolás vissza.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-13",
+    "topic": "Logisztikai alapismeretek",
+    "type": "single",
+    "prompt": "Mit ábrázol a következő ábra? (Nyersanyag-kitermelés/beszállítók → Ellátás → Termelés → Elosztás → Fogyasztók/piac; alul visszafelé: hulladék-feldolgozás, megsemmisítés/hasznosítás; szaggatott vonalak: visszacsatolás.)",
+    "options": [
+      "A logisztika anyag- és információáramlását.",
+      "A logisztika információáramlását.",
+      "A logisztika anyagáramlását."
+    ],
+    "answer": 0,
+    "explanation": "Az ábrán az anyagáramlás (folyamatos nyilak) és az információáramlás (szaggatott visszacsatolás) is szerepel.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-14",
+    "topic": "Termelési logisztika",
+    "type": "truefalse",
+    "prompt": "Döntsd el, hogy igazak vagy hamisak-e az alábbi állítások! (JIT, Kanban, OPT, szinkrongyártás)",
+    "statements": [
+      [
+        "Az OPT rendszernek 4 összetevője van: dob, tartalék, kötél, orsó.",
+        false
+      ],
+      [
+        "A Kanban japán szó, „táblát” jelent.",
+        false
+      ],
+      [
+        "A JIT hátránya a túl erős partnerfüggőség.",
+        true
+      ],
+      [
+        "A szinkrongyártás hasonló a JIT rendszerhez.",
+        false
+      ],
+      [
+        "A Kanban rendszerben nem számít az alkatrészek minősége.",
+        false
+      ],
+      [
+        "A JIT rendszer célja a készletezéssel létrehozott munkafolyamat kialakítása.",
+        false
+      ],
+      [
+        "A szinkrongyártás alapelve: „Termeld meg azt, amire holnap szükséged lesz.”",
+        true
+      ],
+      [
+        "JIT rendszerben gondosan kiválasztott beszállítókkal kell dolgozni.",
+        true
+      ],
+      [
+        "A JIT rendszerben a pull rendszer érvényesül.",
+        true
+      ],
+      [
+        "OPT – optimalizált gyártási mechanizmus.",
+        false
+      ],
+      [
+        "A Kanban rendszerben a pull rendszer érvényesül.",
+        true
+      ],
+      [
+        "JIT – éppen jókor rendszer.",
+        false
+      ],
+      [
+        "A Kanban rendszer előnye a hulladék minimalizálása.",
+        true
+      ],
+      [
+        "A szűk keresztmetszet olyan erőforrás, amelynek kapacitása egyenlő az iránta megnyilvánuló igénnyel.",
+        true
+      ],
+      [
+        "Szinkrongyártás esetén sosem valósul meg a raktár nélküli termelés.",
+        false
+      ]
+    ],
+    "explanation": "Két külön Redmenta-javítókulcs egyezően így értékelt. A tanári értelmezés: Kanban = (jelző)kártya, JIT = „éppen időben”, OPT = Optimized Production Technology (optimalizált gyártástechnológia; 3 eleme: dob–puffer–kötél). A szűk keresztmetszet kapacitása legfeljebb akkora, mint az igény (egyenlő vagy kisebb), ezért az állítás igaz.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-15",
+    "topic": "Logisztikai alapismeretek",
+    "type": "multi",
+    "prompt": "Melyek az anyagáramlási rendszer részei?",
+    "options": [
+      "Gyűjtés és osztályozás",
+      "Rakodás",
+      "Vállalaton kívüli anyagáramlás",
+      "Csomagolás",
+      "Tárolás",
+      "Szállítás"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "explanation": "Mind a hat elem az anyagáramlási rendszer része.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-16",
+    "topic": "Termelési logisztika",
+    "type": "multi",
+    "prompt": "Melyek a termelésirányítás korszerű megoldásai? Válassza ki a helyeseket!",
+    "options": [
+      "JIT",
+      "szinkrongyártás",
+      "Kanban",
+      "OPT rendszer",
+      "tömeggyártás",
+      "egyedi gyártás"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "A tömeggyártás és az egyedi gyártás gyártási típus, nem termelésirányítási módszer.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-17",
+    "topic": "Termelési logisztika",
+    "type": "multi",
+    "prompt": "Melyek a Kanban rendszer előnyei?",
+    "options": [
+      "rugalmas",
+      "megelőzi a túltermelést",
+      "minimalizálja a hulladékot",
+      "csökkenti az átfutási időket",
+      "jelentősen csökkenti a készletszinteket",
+      "egyszerű, könnyen érthető",
+      "átláthatóvá teszi az anyagáramlást",
+      "bonyolult rendszer",
+      "túltermelést okozhat",
+      "hosszú átfutási idők",
+      "rugalmatlan",
+      "hulladék mennyisége növekszik"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "explanation": "A hamis opciók az előnyök ellentétei.",
+    "source": "redmenta"
+  },
+  {
+    "id": "vegy-18",
+    "topic": "Logisztikai alapismeretek",
+    "type": "single",
+    "prompt": "Ha a kiszolgálási színvonal terve 98%-os, akkor az azt jelenti, hogy terv szerint 300 szállításból …. szállítás nem lesz megfelelő.",
+    "options": [
+      "6",
+      "2",
+      "98",
+      "294"
+    ],
+    "answer": 0,
+    "explanation": "300 × 2% = 6 szállítás.",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "vegy-19",
+    "topic": "Készletgazdálkodás",
+    "type": "single",
+    "prompt": "Ha a forgási idő 10 nap, az átlagkészlet 10 millió forint, az időszak napjainak száma 30 nap, akkor mennyi az adott időszak forgalma … millió forint?",
+    "options": [
+      "30",
+      "3",
+      "10",
+      "100"
+    ],
+    "answer": 0,
+    "explanation": "Forgási idő = átlagkészlet × napok ÷ forgalom → forgalom = 10 × 30 ÷ 10 = 30 millió Ft (forgási sebesség = 3).",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "vegy-20",
+    "topic": "Termelési logisztika",
+    "type": "single",
+    "prompt": "Egy gyártási folyamatban a termékek elkészítésének átfutási ideje 22 perc, a ciklusidő pedig 6 perc. A munkavállalók párhuzamosan, különböző műveleteket végeznek. Hány főre van szükség a folyamat lebonyolításához?",
+    "options": [
+      "4 főre",
+      "3 főre",
+      "2 főre"
+    ],
+    "answer": 0,
+    "explanation": "22 ÷ 6 = 3,67 → felfelé kerekítve 4 fő.",
+    "source": "redmenta",
+    "calc": true
+  },
+  {
+    "id": "term-01",
+    "topic": "Termelési logisztika",
+    "type": "truefalse",
+    "prompt": "Melyek a JIT rendszerhez tartozó helyes kifejezések?",
+    "statements": [
+      [
+        "hosszú távú szoros együttműködés",
+        true
+      ],
+      [
+        "magas átfutási idők",
+        false
+      ],
+      [
+        "befektetés lassú megtérülése",
+        false
+      ],
+      [
+        "nulla hibás szállítást kell teljesíteni",
+        true
+      ],
+      [
+        "alacsony szállítási költségek",
+        false
+      ],
+      [
+        "különleges odafigyelés a beszállító részéről",
+        true
+      ],
+      [
+        "alacsony raktár- és készletezési költség",
+        true
+      ],
+      [
+        "alacsonyabb lekötött tőke",
+        true
+      ],
+      [
+        "magas termelékenység",
+        true
+      ]
+    ],
+    "explanation": "Ugyanaz a tartalom, mint a JIT-es többszörös választós kérdésnél, igaz-hamis formában.",
+    "source": "redmenta"
+  },
+  {
+    "id": "term-02",
+    "topic": "Termelési logisztika",
+    "type": "truefalse",
+    "prompt": "Melyek a Kanban rendszer előnyei?",
+    "statements": [
+      [
+        "túltermelést okozhat",
+        false
+      ],
+      [
+        "megelőzi a túltermelést",
+        true
+      ],
+      [
+        "jelentősen csökkenti a készletszinteket",
+        true
+      ],
+      [
+        "bonyolult rendszer",
+        false
+      ],
+      [
+        "rugalmatlan",
+        false
+      ],
+      [
+        "hosszú átfutási idők",
+        false
+      ],
+      [
+        "egyszerű, könnyen érthető",
+        true
+      ],
+      [
+        "rugalmas",
+        true
+      ],
+      [
+        "csökkenti az átfutási időket",
+        true
+      ],
+      [
+        "átláthatóvá teszi az anyagáramlást",
+        true
+      ],
+      [
+        "hulladék mennyisége növekszik",
+        false
+      ],
+      [
+        "minimalizálja a hulladékot",
+        true
+      ]
+    ],
+    "explanation": "12/12-es Redmenta-eredmény alapján.",
+    "source": "redmenta"
+  },
+  {
+    "id": "term-03",
+    "topic": "Termelési logisztika",
+    "type": "multi",
+    "prompt": "Milyen gyártási módok valósulnak meg a gyártás tömegszerűsége alapján történő besorolásnál?",
+    "options": [
+      "egyedi gyártás",
+      "sorozatgyártás",
+      "tömeggyártás",
+      "kötegelt gyártás",
+      "szakaszos folyamat",
+      "projekt jellegű folyamat"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "A Redmenta-kulcs szerint a kötegelt gyártás is ide tartozik (a korábbi megoldásból ez kimaradt). A szakaszos és a projekt jellegű folyamat a folyamattípus szerinti besorolás része.",
+    "source": "redmenta"
+  },
+  {
+    "id": "term-04",
+    "topic": "Termelési logisztika",
+    "type": "multi",
+    "prompt": "Határozza meg a pull rendszer előnyeit!",
+    "options": [
+      "nagyobb kapacitáskihasználással minimálisra szorítható a költség",
+      "nem halmozódnak fel készletek",
+      "a forgási sebesség nő",
+      "a termék átfutási ideje minimumra csökkenthető"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Mind a négy állítás a pull (húzó) rendszer előnye.",
+    "source": "redmenta"
+  },
+  {
+    "id": "term-05",
+    "topic": "Termelési logisztika",
+    "type": "truefalse",
+    "prompt": "Döntsd el, hogy igazak vagy hamisak-e az alábbi állítások!",
+    "statements": [
+      [
+        "Tömeggyártás esetén alacsony volumenben termelnek.",
+        false
+      ],
+      [
+        "Folyamatrendszerű gyártásnál a termékek mindig ugyanazon lépéssorrendet követve haladnak végig a termelési folyamaton.",
+        true
+      ],
+      [
+        "A pull termelésirányítási rendszer a prognosztizált megrendelési adatokra épül.",
+        false
+      ],
+      [
+        "A push termelésirányítási rendszer meglévő készleten lévő anyagokból kezdi meg a gyártást.",
+        false
+      ],
+      [
+        "Sorozatgyártásnál ugyanolyan termékeket állítanak elő egy időben vagy közvetlenül egymás után.",
+        true
+      ],
+      [
+        "A gyártási vagy termelési logisztika outputja az értékesítési logisztika kezdete.",
+        true
+      ],
+      [
+        "A termelési rendszer célja a kitűzött termelési cél elérése a gazdaságosságot figyelmen kívül hagyva.",
+        false
+      ],
+      [
+        "A pull rendszer alkalmazásával a vevőkiszolgálási színvonal magas szinten biztosítható.",
+        true
+      ],
+      [
+        "Műhelyrendszerű gyártásnál egy adott termék előállításához szükséges technológiai műveleteket egy területre vonják össze.",
+        false
+      ],
+      [
+        "A gyártási vagy termelési logisztika inputja a beszerzési logisztika vége.",
+        true
+      ]
+    ],
+    "explanation": "A Redmenta-kulcs két helyen eltér a korábbi megoldástól: a push rendszer az előrejelzés (terv) alapján indítja a gyártást, nem a meglévő készletből; a műhelyrendszerben az AZONOS műveleteket végző gépeket vonják össze egy műhelybe (egy termék összes műveletét a csoportos/cellás elrendezés hozza egy helyre).",
+    "source": "redmenta"
+  },
+  {
+    "id": "term-06",
+    "topic": "Termelési logisztika",
+    "type": "match",
+    "prompt": "Párosítsa a termelési logisztika transzformációs folyamatait!",
+    "pairs": [
+      [
+        "tárolás",
+        "raktározás"
+      ],
+      [
+        "fizikai természetű",
+        "autó összeszerelés"
+      ],
+      [
+        "csere",
+        "kereskedelem"
+      ],
+      [
+        "helyzeti",
+        "szállítás"
+      ],
+      [
+        "kémiai",
+        "bor gyártása"
+      ]
+    ],
+    "explanation": "Időbeli (tárolás), fizikai, csere (tulajdonosváltás), helyzeti (térbeli) és kémiai átalakítás.",
+    "source": "redmenta"
+  },
+  {
+    "id": "term-07",
+    "topic": "Termelési logisztika",
+    "type": "multi",
+    "prompt": "Mely ismérvek jellemzőek a sorozatgyártásra?",
+    "options": [
+      "általában szabványos termékstratégiáknál alkalmazzák",
+      "biztosítja az átállást egyik sorozatról a másikra",
+      "lehet egészen magas az előállított volumen",
+      "operatív irányításigénye kisebb",
+      "egy sorozaton belül a minőségi tulajdonságok azonosak",
+      "univerzális és célgépeket egyaránt alkalmaznak",
+      "fő kérdés az optimális sorozatnagyság meghatározása",
+      "alacsony volumenben termelnek",
+      "magasak a fajlagos gyártási költségek",
+      "beruházásigényes"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "explanation": "A Redmenta-kulcs szerint hét helyes ismérv van (a szabványos termékstratégia és a kisebb operatív irányításigény is). Az alacsony volumen és a magas fajlagos költség az egyedi gyártásra, a nagy beruházásigény a tömeggyártásra jellemző.",
+    "source": "redmenta"
+  }
 ]

@@ -109,10 +109,13 @@ function viewHome() {
   })());
   const topicField = () => h('div', { class: 'field' },
     h('div', { class: 'lbl row' }, 'Témakörök', h('button', { class: 'btn ghost sm', onclick: () => { homeOpts.topics = homeOpts.topics.length === topics.length ? [] : topics.slice(); render(); } }, homeOpts.topics.length === topics.length ? 'Egyik sem' : 'Mind')),
-    chipSet(topics, homeOpts.topics, (t) => `${t} (${BANK.filter((q) => q.topic === t).length})`, (t) => toggleIn(homeOpts.topics, t)));
+    chipSet(topics, homeOpts.topics, (t) => `${t} (${BANK.filter((q) => q.topic === t && (settings.calcTheory || !q.calc)).length})`, (t) => toggleIn(homeOpts.topics, t)));
   const essayToggle = () => h('label', { class: 'switch field' }, h('input', {
     type: 'checkbox', checked: settings.essays, onchange: (e) => { settings.essays = e.target.checked; saveSettings(); },
   }), 'Kifejtős (definíciós) feladatok is legyenek');
+  const calcToggle = () => h('label', { class: 'switch field', title: 'A tanár összesítő Redmenta-feladatlapjáról származó rövid számolásos kérdések (pl. LIFO-érték, ABC-arány, ciklusidő)' }, h('input', {
+    type: 'checkbox', checked: settings.calcTheory, onchange: (e) => { settings.calcTheory = e.target.checked; saveSettings(); render(); },
+  }), `Számolásos kérdések is legyenek az elméletben (${BANK.filter((q) => q.calc).length} db)`);
   const kindField = (exclusive) => h('div', { class: 'field' },
     h('div', { class: 'lbl' }, 'Feladattípusok'),
     chipSet(GENERATORS.filter((g) => !exclusive || g.meta.exam).map((g) => g.meta.kind), homeOpts.kinds,
@@ -121,16 +124,16 @@ function viewHome() {
   const presetField = () => h('div', { class: 'field' }, h('div', { class: 'lbl' }, 'Adatok'),
     chipSet(['random', 'vizsga', 'v23'], [homeOpts.preset], (v) => ({ random: 'Véletlen új adatok', vizsga: 'Gamer székes mintavizsga', v23: '23-as feladatlap (a vizsgához legközelebb)' }[v]), (v) => { homeOpts.preset = v; }));
 
-  if (homeMode === 'theory') setup.append(numField('Kérdések száma', 'count', 1, BANK.length), topicField(), essayToggle());
+  if (homeMode === 'theory') setup.append(numField('Kérdések száma', 'count', 1, BANK.length), topicField(), essayToggle(), calcToggle());
   if (homeMode === 'practice') setup.append(kindField(false), presetField(), h('p', { class: 'small muted' }, 'A táblázatos feladatoknál a cellák közvetlenül kitölthetők (Enter: következő mező). Tizedesvessző és -pont is jó.'));
-  if (homeMode === 'mixed') setup.append(numField('Elméleti kérdések', 'count', 1, 60), numField('Gyakorlati feladatok', 'pCount', 1, 9), topicField(), kindField(false), essayToggle());
+  if (homeMode === 'mixed') setup.append(numField('Elméleti kérdések', 'count', 1, 60), numField('Gyakorlati feladatok', 'pCount', 1, 9), topicField(), kindField(false), essayToggle(), calcToggle());
   if (homeMode === 'exam') {
     setup.append(
       h('div', { class: 'stat-grid' },
         h('div', { class: 'stat' }, h('div', { class: 'small muted' }, 'Írásbeli'), h('div', { class: 'v' }, `${settings.examWrittenMin} perc`), h('div', { class: 'small' }, `${settings.examTheory} elméleti kérdés${settings.essays ? `, ebből ${settings.examEssays} kifejtős` : ''} · súly ${settings.weightWritten}%`)),
         h('div', { class: 'stat' }, h('div', { class: 'small muted' }, 'Projektfeladat'), h('div', { class: 'v' }, `${settings.examProjectMin} perc`), h('div', { class: 'small' }, `8 gyakorlati feladat, 36 pont · súly ${settings.weightProject}%`))),
       h('p', { class: 'small muted', style: { marginTop: '12px' } }, `Sikeres vizsga: mindkét részből legalább ${settings.passPct}%. Érdemjegy: 50–69% elégséges, 70–79% közepes, 80–89% jó, 90% felett jeles. (A paraméterek a Beállításokban módosíthatók.)`),
-      presetField(), essayToggle());
+      presetField(), essayToggle(), calcToggle());
   }
   if (homeMode === 'review') {
     const weak = Object.entries(stats.q).filter(([id, v]) => BANK_BY_ID[id] && v.last < 1).length;
@@ -178,26 +181,23 @@ function viewSession() {
   const done = S.items.slice(range[0], range[1]).filter((_, k) => answered(range[0] + k)).length;
   const total = range[1] - range[0];
   const bar = h('div', { class: 'sess-bar' },
-    h('div', { class: 'row' },
-      h('h2', { style: { margin: 0, fontSize: '1.15rem' } }, S.title),
-      h('span', { class: 'badge' }, S.id),
+    h('div', { class: 'row sess-top' },
+      h('h2', { class: 'sess-title', tabindex: 0, 'data-tip': `Azonosító: ${S.id}`, 'aria-label': `${S.title} (azonosító: ${S.id})` }, S.title),
       S.submitted ? h('span', { class: 'badge ok' }, 'Beadva') : null,
+      S.sections ? timerEl() : null,
       h('span', { class: 'spacer' }),
-      S.sections ? timerEl() : null),
-    S.sections ? h('div', { class: 'tabs', style: { marginTop: '8px' } }, S.sections.map((x, k) => h('button', {
-      class: 'tab' + (k === sec ? ' on' : ''),
-      onclick: () => { S.timer.section = k; if (!S.timer.sectionStart[k]) S.timer.sectionStart[k] = Date.now(); persist(); render(); scrollTo(0, 0); },
-    }, x.name))) : null,
-    h('div', { class: 'row', style: { marginTop: '8px' } },
-      h('div', { class: 'progress', title: `${done}/${total} megkezdve` }, h('i', { style: { width: `${(done / Math.max(1, total)) * 100}%` } })),
-      h('span', { class: 'small muted' }, `${done}/${total}`)),
-    h('div', { class: 'row', style: { marginTop: '8px', gap: '6px' } },
       h('button', { class: 'btn sm' + (allOn('revealed') ? ' on' : ''), onclick: () => toggleAll('revealed') }, svg(I.eye, 16), allOn('revealed') ? 'Megoldások elrejtése' : 'Összes megoldás'),
       h('button', { class: 'btn sm' + (allOn('expl') ? ' on' : ''), onclick: () => toggleAll('expl') }, svg(I.info, 16), allOn('expl') ? 'Magyarázatok elrejtése' : 'Összes magyarázat'),
       h('button', { class: 'btn sm', onclick: () => fillAll() }, 'Összes kitöltése'),
       h('button', { class: 'btn sm', onclick: () => aiMenu() }, svg(I.spark, 16), 'AI'),
-      h('span', { class: 'spacer' }),
-      S.submitted ? h('a', { class: 'btn primary sm', href: '#/results' }, 'Eredmény') : h('button', { class: 'btn primary sm', onclick: submit }, svg(I.check, 16), 'Beadás')));
+      S.submitted ? h('a', { class: 'btn primary sm', href: '#/results' }, 'Eredmény') : h('button', { class: 'btn primary sm', onclick: submit }, svg(I.check, 16), 'Beadás')),
+    S.sections ? h('div', { class: 'tabs', style: { marginTop: '10px' } }, S.sections.map((x, k) => h('button', {
+      class: 'tab' + (k === sec ? ' on' : ''),
+      onclick: () => { S.timer.section = k; if (!S.timer.sectionStart[k]) S.timer.sectionStart[k] = Date.now(); persist(); render(); scrollTo(0, 0); },
+    }, x.name))) : null,
+    h('div', { class: 'row', style: { marginTop: '10px' } },
+      h('div', { class: 'progress', title: `${done}/${total} megkezdve` }, h('i', { style: { width: `${(done / Math.max(1, total)) * 100}%` } })),
+      h('span', { class: 'small muted' }, `${done}/${total}`)));
   wrap.appendChild(bar);
 
   for (let i = range[0]; i < range[1]; i++) wrap.appendChild(card(i));

@@ -24,7 +24,7 @@ export function practiceOf(item) {
 export const questionOf = (item) => (item.k === 't' ? BANK_BY_ID[item.id] : practiceOf(item));
 
 function pickTheory(r, { count, topics, essays, essayCount, exclude = [] }) {
-  let pool = BANK.filter((q) => (!topics?.length || topics.includes(q.topic)) && !exclude.includes(q.id));
+  let pool = BANK.filter((q) => (!topics?.length || topics.includes(q.topic)) && !exclude.includes(q.id) && (settings.calcTheory || !q.calc));
   const nonEssay = r.shuffle(pool.filter((q) => q.type !== 'essay'));
   const essayPool = essays ? r.shuffle(pool.filter((q) => q.type === 'essay')) : [];
   let nE = essays ? (essayCount ?? Math.round(count * 0.15)) : 0;

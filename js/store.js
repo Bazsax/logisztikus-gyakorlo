@@ -22,7 +22,8 @@ export const writeRaw = write;
 export const DEFAULT_SETTINGS = {
   theme: 'system',          // system | light | dark
   essays: true,             // kifejtős feladatok be/ki
-  essayScoring: 'self',     // self = kulcselemek kipipálása | exclude = kihagyás a pontozásból
+  essayScoring: 'self',
+  calcTheory: false,        // számolásos kérdések az elméleti részben (tanári összesítő feladatlapról)     // self = kulcselemek kipipálása | exclude = kihagyás a pontozásból
   theoryCount: 20,
   mixedTheory: 12,
   mixedPractice: 3,
