@@ -117,7 +117,7 @@ function viewHome() {
       (k) => { const g = GENERATORS.find((x) => x.meta.kind === k).meta; return `${g.order <= 8 ? g.order + '. ' : ''}${g.title}${g.exam ? '' : ' (extra)'}`; },
       (k) => toggleIn(homeOpts.kinds, k)));
   const presetField = () => h('div', { class: 'field' }, h('div', { class: 'lbl' }, 'Adatok'),
-    chipSet(['random', 'vizsga'], [homeOpts.preset], (v) => (v === 'random' ? 'Véletlen új adatok' : 'A mintavizsga (Gamer szék) adatai'), (v) => { homeOpts.preset = v; }));
+    chipSet(['random', 'vizsga', 'v23'], [homeOpts.preset], (v) => ({ random: 'Véletlen új adatok', vizsga: 'Gamer székes mintavizsga', v23: '23-as feladatlap (a vizsgához legközelebb)' }[v]), (v) => { homeOpts.preset = v; }));
 
   if (homeMode === 'theory') setup.append(numField('Kérdések száma', 'count', 1, BANK.length), topicField(), essayToggle());
   if (homeMode === 'practice') setup.append(kindField(false), presetField(), h('p', { class: 'small muted' }, 'A táblázatos feladatoknál a cellák közvetlenül kitölthetők (Enter: következő mező). Tizedesvessző és -pont is jó.'));
@@ -263,7 +263,7 @@ function card(i) {
     h('span', { class: 'badge' }, isT ? TYPE_LABEL[q.type] : 'Gyakorlati'),
     h('span', { class: 'badge info' }, isT ? q.topic : q.title),
     isT && settings.showSourceBadge ? (q.source === 'redmenta' ? h('span', { class: 'badge ok', title: 'A megoldás a Redmenta javítókulcsán alapul' }, 'Redmenta-kulcs') : q.source === 'vizsga' ? h('span', { class: 'badge ok', title: 'Korábbi vizsgafeladatsor megoldókulcsa alapján' }, 'Vizsgakulcs') : h('span', { class: 'badge warn', title: 'A megoldást Claude készítette – nincs hozzá javítókulcs' }, 'Saját megoldás')) : null,
-    !isT && it.ref.preset === 'vizsga' ? h('span', { class: 'badge accent' }, 'Vizsgapélda') : null,
+    !isT && it.ref.preset ? h('span', { class: 'badge accent' }, { vizsga: 'Gamer-mintavizsga', v23: '23-as feladatlap', v23b: '23-as feladatlap – bónusz' }[it.ref.preset]) : null,
     S.filled?.[i] ? h('span', { class: 'badge warn' }, 'Kitöltve a megoldással') : null,
     h('span', { class: 'item-score' }, checked ? (sc.excluded ? 'nem pontozott' : `${fmt(sc.got)} / ${fmt(sc.max)} p`) : `${fmt(isT ? maxPoints(q) : q.points)} p`)));
 

@@ -14,7 +14,9 @@ const STAGES = [
 
 export function generate(r, preset) {
   let P;
-  if (preset === 'vizsga') {
+  if (preset === 'v23') {
+    P = { what: 'kisbútor', m1: 'Festés', m2: 'Lakkozás', jobs: [['A', 2, 5], ['B', 6, 4], ['C', 4, 6], ['D', 3, 1], ['E', 1, 8]] };
+  } else if (preset === 'vizsga') {
     P = { what: 'Gamer szék', m1: 'Váz készítése', m2: 'Ülő- és hátrész legyártása', jobs: [['Vero', 4, 7], ['Axon', 8, 5], ['Zeno', 5, 9], ['Oryx', 2, 3], ['Nexa', 6, 2], ['Koru', 1, 8]] };
   } else {
     const n = r.pick([5, 6, 6]);

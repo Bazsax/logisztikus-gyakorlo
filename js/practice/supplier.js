@@ -9,7 +9,17 @@ const WEIGHTS = [[35, 30, 25, 10], [40, 30, 20, 10], [30, 30, 25, 15], [30, 25, 
 
 export function generate(r, preset) {
   let P;
-  if (preset === 'vizsga') {
+  if (preset === 'v23') {
+    P = {
+      names: ['„A”', '„B”'], weights: [30, 25, 35, 10],
+      s: [
+        { total: 54, qty: 53, quality: 52, time: 50, price: 600, phr: { qty: 'pos', quality: 'pos', time: 'neg' } },
+        { total: 46, qty: 43, quality: 44, time: 45, price: 580, phr: { qty: 'pos', quality: 'neg', time: 'pos' } },
+      ],
+      keyAlt: [null, 96.5],
+      keyNote: 'A 23-as feladatlap megoldókulcsa a „B” szállítóra 96,5%-ot ad, mert az időbeni pontosságnál 0,978 helyett 0,987-tel szorzott (35 × 0,987 = 34,545). A helyes érték 35 × 0,978 = 34,230 → 96,2%. Mindkettőt elfogadjuk.',
+    };
+  } else if (preset === 'vizsga') {
     P = {
       names: ['Alfa', 'Béta'], weights: [35, 30, 25, 10],
       s: [
@@ -63,7 +73,7 @@ function build(P) {
   ]);
   addForm(t, 'res', 'Átlagos kiszolgálási színvonal (%)', ['Szállító', 'Eredmény (%)'], [
     { label: P.names[0], field: { expect: pct[0], dec: 1, tol: 0.11, showDec: 1, unit: '%' }, pts: 1 },
-    { label: P.names[1], field: { expect: pct[1], dec: 1, tol: 0.11, showDec: 1, unit: '%' }, pts: 1 },
+    { label: P.names[1], field: { expect: pct[1], accept: P.keyAlt?.[1] ? [P.keyAlt[1]] : [], dec: 1, tol: 0.11, showDec: 1, unit: '%' }, pts: 1 },
   ]);
 
   const s0 = P.s[0];
@@ -73,6 +83,7 @@ function build(P) {
     `${P.names[0]} mennyiségi pontossága: ${s0.qty} ÷ ${s0.total} = ${fmt(co[0].qty, 3)}. Egységár: ${fmt(minPrice)} ÷ ${fmt(s0.price)} = ${fmt(co[0].price, 3)}.`,
   ];
   t.solution = P.s.map((s, i) => p(`${P.names[i]}: mennyiség ${s.qty}/${s.total} = ${fmt(co[i].qty, 3)}; minőség ${s.quality}/${s.total} = ${fmt(co[i].quality, 3)}; idő ${s.time}/${s.total} = ${fmt(co[i].time, 3)}; ár ${fmt(minPrice)}/${fmt(s.price)} = ${fmt(co[i].price, 3)} → (${wQ}×${fmt(co[i].qty, 3)} + ${wM}×${fmt(co[i].quality, 3)} + ${wT}×${fmt(co[i].time, 3)} + ${wP}×${fmt(co[i].price, 3)}) ÷ 100 = ${fmt(pct[i], 1)}%`));
+  if (P.keyNote) t.solution.push(note(P.keyNote));
   t.solution.push(note(`A jobb beszállító: ${pct[0] >= pct[1] ? P.names[0] : P.names[1]} (${fmt(Math.max(...pct), 1)}%).`));
   return t;
 }

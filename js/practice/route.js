@@ -3,13 +3,17 @@ import { makeTask, addForm, p, table, note } from './common.js';
 
 export const meta = { kind: 'route', title: 'Körjárat optimalizálása (sor-/oszlopminimum)', points: 3, exam: true, order: 8 };
 
-const NODES = ['Késztermék raktár', 'A raktár', 'B raktár', 'C raktár', 'D raktár'];
+const NODES5 = ['Késztermék raktár', 'A raktár', 'B raktár', 'C raktár', 'D raktár'];
+const NODES6 = ['Központi raktár', 'A raktár', 'B raktár', 'C raktár', 'D raktár', 'E raktár'];
 
 export function generate(r, preset) {
   let M; let method = 'sor';
   if (preset === 'vizsga') {
     M = [[0, 3, 4, 12, 6], [15, 0, 5, 1, 12], [4, 5, 0, 2, 7], [1, 6, 2, 0, 5], [18, 12, 15, 18, 0]];
+  } else if (preset === 'v23') {
+    M = [[0, 3, 5, 11, 9, 6], [15, 0, 7, 2, 9, 4], [4, 6, 0, 6, 7, 13], [7, 5, 2, 0, 1, 19], [13, 12, 15, 18, 0, 6], [8, 9, 11, 10, 3, 0]];
   } else {
+    const NODES = NODES5;
     for (let i = 0; i < 500; i++) {
       M = NODES.map((_, a) => NODES.map((__, b) => (a === b ? 0 : r.int(1, 20))));
       method = r.next() < 0.7 ? 'sor' : 'oszlop';
@@ -40,6 +44,7 @@ export function nearest(M) {
 
 function build(P) {
   const t = makeTask({ ...meta, params: P });
+  const NODES = P.M.length === 6 ? NODES6 : NODES5;
   const col = P.method === 'oszlop';
   const { legs, total } = nearest(col ? transpose(P.M) : P.M);
   t.statement = [
@@ -52,7 +57,7 @@ function build(P) {
       { type: 'select', options: NODES, expect: NODES[l.from] },
       { type: 'select', options: NODES, expect: NODES[l.to] },
       { expect: l.d, unit: 'km' },
-    ], pts: 0.5, calc: false,
+    ], pts: (meta.points - 0.5) / legs.length, calc: false,
   })));
   addForm(t, 'tot', null, ['', 'Összesen (km)'], [{ label: 'Összesen', field: { expect: total, unit: 'km' }, pts: 0.5, calc: false }]);
   t.hints = col ? [

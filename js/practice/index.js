@@ -25,7 +25,7 @@ export const byKind = Object.fromEntries(GENERATORS.map((g) => [g.meta.kind, g])
 export function makePractice(ref) {
   const g = byKind[ref.kind];
   const t = g.generate(rng(ref.seed), ref.preset);
-  t.id = `p-${ref.kind}-${ref.preset === 'vizsga' ? 'vizsga' : ref.seed}`;
+  t.id = `p-${ref.kind}-${ref.preset || ref.seed}`;
   t.ref = ref;
   return t;
 }

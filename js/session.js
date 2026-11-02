@@ -33,8 +33,13 @@ function pickTheory(r, { count, topics, essays, essayCount, exclude = [] }) {
   return chosen.map((q) => ({ k: 't', id: q.id, view: makeView(q, r) }));
 }
 
-function practiceItems(kinds, preset) {
-  return kinds.map((kind) => ({ k: 'p', ref: { kind, seed: newSeed(), preset: preset === 'vizsga' ? 'vizsga' : undefined } }));
+const FIXED = ['vizsga', 'v23'];
+function practiceItems(kinds, preset, bonus = true) {
+  const fixed = FIXED.includes(preset) ? preset : undefined;
+  const items = kinds.map((kind) => ({ k: 'p', ref: { kind, seed: newSeed(), preset: fixed } }));
+  // A 23-as feladatlap két bónuszfeladata (második MRP és termelési feladat)
+  if (fixed === 'v23' && bonus) ['mrp', 'production'].filter((k) => kinds.includes(k)).forEach((kind) => items.push({ k: 'p', ref: { kind, seed: newSeed(), preset: 'v23b' } }));
+  return items;
 }
 
 /**
@@ -55,7 +60,7 @@ export function createSession(opts) {
     s.title = 'Elméleti gyakorlás';
     s.items = pickTheory(r, { count: opts.count, topics: opts.topics, essays });
   } else if (opts.mode === 'practice') {
-    s.title = opts.preset === 'vizsga' ? 'Gyakorlati feladatok – a vizsgapélda adataival' : 'Gyakorlati feladatok';
+    s.title = { vizsga: 'Gyakorlati feladatok – a Gamer székes mintavizsga adataival', v23: 'Gyakorlati feladatok – a 23-as feladatlap adataival' }[opts.preset] || 'Gyakorlati feladatok';
     s.items = practiceItems(opts.kinds, opts.preset);
   } else if (opts.mode === 'mixed') {
     s.title = 'Vegyes gyakorlás';
@@ -70,7 +75,7 @@ export function createSession(opts) {
     s.title = 'Vizsgaszimuláció';
     const t = pickTheory(r, { count: settings.examTheory, essays, essayCount: essays ? settings.examEssays : 0 });
     const kinds = GENERATORS.filter((g) => g.meta.exam).map((g) => g.meta.kind);
-    const p = practiceItems(kinds, opts.preset);
+    const p = practiceItems(kinds, opts.preset, false);
     s.items = [...t, ...p];
     s.sections = [
       { name: 'Írásbeli (elmélet)', from: 0, to: t.length, minutes: settings.examWrittenMin, weight: settings.weightWritten },

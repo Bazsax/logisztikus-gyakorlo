@@ -25,6 +25,18 @@ const MULTI = [
 ];
 
 export function generate(r, preset) {
+  if (preset === 'v23' || preset === 'v23b') {
+    const b = preset === 'v23b';
+    return build({
+      multi: true,
+      product: b ? { name: 'Ruhásszekrény', stock: 15, lead: 1, pack: 1 } : { name: 'Franciaágy', stock: 8, lead: 1, pack: 1 },
+      demand: b ? { 5: 100, 6: 75 } : { 5: 220, 6: 175 },
+      sub: b ? { name: 'Szekrényváz', qty: 1, stock: 6, lead: 1, pack: 1 } : { name: 'Ágykeret', qty: 1, stock: 3, lead: 2, pack: 1 },
+      comps: b
+        ? [{ name: 'Láb', qty: 4, stock: 53, lead: 2, pack: 40 }, { name: 'Csavar', qty: 10, qtySub: 6, stock: 89, lead: 1, pack: 250 }]
+        : [{ name: 'Láb', qty: 4, stock: 49, lead: 1, pack: 20 }, { name: 'Csavar', qty: 8, qtySub: 4, stock: 210, lead: 1, pack: 500 }],
+    });
+  }
   if (preset === 'vizsga') {
     return build({
       product: { name: 'Gamer szék', stock: 15, lead: 1, pack: 15 },

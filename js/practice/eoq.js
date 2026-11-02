@@ -7,6 +7,7 @@ export const meta = { kind: 'eoq', title: 'Gazdaságos rendelési tételnagyság
 export function generate(r, preset) {
   let P;
   if (preset === 'vizsga') P = { D: 15000, price: 1200, h: 12, S: 300, L: 5, SS: 100 };
+  else if (preset === 'v23') P = { D: 50000, price: 900, h: 10, S: 40, L: 4, SS: 50 };
   else {
     for (let i = 0; i < 500; i++) {
       const Q = r.pick([100, 120, 150, 200, 240, 250, 300, 400, 500, 600]);

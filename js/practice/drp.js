@@ -11,7 +11,17 @@ export const meta = { kind: 'drp', title: 'Elosztási szükséglettervezés (DRP
 
 export function generate(r, preset) {
   let P;
-  if (preset === 'vizsga') {
+  if (preset === 'v23') {
+    P = {
+      product: 'háztartási készülék',
+      dcs: [
+        { name: '„A”', d7: 65, d8: 70, open: 7, lead: 2 },
+        { name: '„B”', d7: 72, d8: 55, open: 13, lead: 1 },
+        { name: '„C”', d7: 85, d8: 92, open: 17, lead: 1 },
+      ],
+      min: 50, step: 40, other: 50, factoryOpen: 8, unit: 100,
+    };
+  } else if (preset === 'vizsga') {
     P = {
       product: 'Gamer szék',
       dcs: [
@@ -100,7 +110,7 @@ function build(P) {
   });
   addGrid(t, 'fac', 'Vállalat késztermékraktár', COLS, [
     { label: 'Bruttó kereslet', values: row(fw.map((x) => [x.w, x.gross])), pts: 0.6 },
-    { label: 'Nyitókészlet', values: row(fw.map((x) => [x.w, x.open])), pts: 0.3 },
+    { label: 'Nyitókészlet', values: (() => { const a = row(fw.map((x) => [x.w, x.open])); const lw = fw[fw.length - 1]; if (lw.w + 1 <= 9) a[idx(lw.w + 1)] = { soft: lw.open + lw.rec - lw.gross }; return a; })(), pts: 0.3 },
     { label: 'Nettó kereslet', values: row(fw.map((x) => [x.w, x.net])), pts: 0.3 },
     { label: 'Tervezett beérkezés', values: row(fw.map((x) => [x.w, x.rec || null])), pts: 0.3 },
     { label: 'Tervezett rendelés', values: row(fw.map((x) => [x.w - 1, x.rec || null])), pts: 0.6 },

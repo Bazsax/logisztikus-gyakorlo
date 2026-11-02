@@ -1,5 +1,5 @@
 // Egyszerű offline gyorsítótár: először hálózat, hiba esetén a tárolt példány.
-const CACHE = 'lg-v3';
+const CACHE = 'lg-v4';
 const SHELL = ['./', 'index.html', 'css/style.css', 'js/app.js', 'js/util.js', 'js/store.js', 'js/session.js', 'js/theory.js',
   'js/practiceView.js', 'js/ai.js', 'js/practice/index.js', 'js/practice/common.js', 'js/practice/drp.js', 'js/practice/mrp.js',
   'js/practice/supplier.js', 'js/practice/eoq.js', 'js/practice/johnson.js', 'js/practice/turnover.js', 'js/practice/production.js',

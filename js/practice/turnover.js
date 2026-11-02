@@ -9,6 +9,7 @@ const DATES = ['Január 1.', 'Április 1.', 'Július 1.', 'Október 1.', 'Decemb
 export function generate(r, preset) {
   let P;
   if (preset === 'vizsga') P = { vals: [60, 65, 70, 62, 58], sales: 720, days: 360 };
+  else if (preset === 'v23') P = { vals: [52, 56, 61, 53, 48], sales: 560, days: 360 };
   else {
     let vals;
     for (let i = 0; i < 200; i++) {

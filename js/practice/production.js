@@ -7,6 +7,8 @@ export const meta = { kind: 'production', title: 'Termelési jellemzők: kibocs�
 export function generate(r, preset) {
   let P;
   if (preset === 'vizsga') P = { what: 'Gamer székek', ops: [4, 8, 12, 5, 2, 1], hours: 8 };
+  else if (preset === 'v23') P = { what: 'kisbútorok', ops: [3, 7, 6, 4, 10, 1], hours: 8 };
+  else if (preset === 'v23b') P = { what: 'bútorok', ops: [3, 2, 8, 4, 1], hours: 8 };
   else {
     let ops;
     for (let i = 0; i < 100; i++) {
